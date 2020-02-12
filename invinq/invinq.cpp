@@ -414,7 +414,7 @@ void Inventory::editItem()
     cin >> answer;
 
     // Specification A2 - Validate Inventory
-    if (!cin || !(answer <= itemsSize && answer > 0))
+    while (!cin || !(answer <= itemsSize && answer > 0))
     {
         cout << "Invalid input. Please try again: ";
         cin.clear();
@@ -433,7 +433,7 @@ void Inventory::editItem()
     cin >> propertyToEdit;
 
     // Specification A2 - Validate Inventory
-    if (!cin || !(propertyToEdit <= 3 && propertyToEdit > 0))
+    while (!cin || !(propertyToEdit <= 3 && propertyToEdit > 0))
     {
         cout << "Invalid input. Please try again: ";
         cin.clear();
@@ -521,7 +521,7 @@ void Inventory::removeItem()
     cin >> answer;
 
     // Specification A2 - Validate Inventory
-    if (!cin || !(answer <= itemsSize && answer > 0))
+    while (!cin || !(answer <= itemsSize && answer > 0))
     {
         cout << "Invalid input. Please try again: ";
         cin.clear();
