@@ -580,7 +580,7 @@ void Inventory::decrementItemsArray()
     itemsSize--;
 }
 
-// Given an i, push every item from the right to left once starting at i
+// Given an index, push every item from the right to left once starting at index
 void Inventory::removeIndex(int index)
 {
     for (int i = index; i < itemsSize - 1; i++)
