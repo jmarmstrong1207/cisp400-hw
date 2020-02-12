@@ -6,6 +6,7 @@
 #include <limits>
 #include <string>
 #include <ctime>
+#include <iomanip>
 
 using namespace std;
 
@@ -21,8 +22,6 @@ void addGrade(double *&, int &);
 void programGreeting();
 int displayMenu();
 void unitTest();
-
-class Date;
 
 int main()
 {
@@ -185,7 +184,6 @@ void addGrade(double *&grades, int &size)
 }
 
 // -------------------------------------------------------------------------
-
 int displayMenu()
 {
     int answer = 0;
@@ -209,76 +207,139 @@ int displayMenu()
     cout << "\n";
     return answer;
 }
-
 // -------------------------------------------------------------------------
+
 // Specification A1 - Date class
 class Date
 {
 private:
-    int m;
-    int d;
-    int y;
+    int month;
+    int day;
+    int year;
+    int hour;
+    int minute;
+    int second;
 
 public:
 
     // Specification A2 - External date initialization
-    Date(int m, int d, int y)
-    {
-        this->m = m;
-        this->d = d;
-        this->y = y;
-    }
-    Date()
-    {
-        time_t unixNow = time(NULL);
-        tm* now = localtime(&unixNow);
-        
-        this->m = now->tm_mon + 1;
-        this->d = now->tm_mday;
-        this->y = now->tm_year + 1900;
-    }
+    Date(int month, int day, int year, int hour, int minute, int second);
+    Date();
 
     // Specification A3 - Component Test Method in Date
-    static void dateTest()
-    {
-        int month = 12;
-        int day = 7;
-        int year = 2000;
+    static void dateTest();
 
-        Date d(month, day, year);
-        Date dd;
-
-        time_t unixNow = time(NULL);
-        tm* now = localtime(&unixNow);
-
-
-        if (month == d.getMonth() &&  now->tm_mon + 1 ==  dd.getMonth())
-            cout << "getMonth() is working\n";
-        if (day == d.getDay() && now->tm_mday == dd.getDay())
-            cout << "getDay() is working\n";
-        if (year == d.getYear() && now->tm_year + 1900 == dd.getYear())
-            cout << "getYear() is working\n";
-        if ("12/12/12" == d.getDate() && "12/12/12" == dd.getDate())
-            cout << "getDate() is working\n";
-    }
-
-    int getMonth()
-    {
-        return m;
-    }
-    int getDay()
-    {
-        return d;
-    }
-    int getYear()
-    {
-        return y;
-    }
-    string getDate()
-    {
-        return to_string(m) + "/" + to_string(d) + "/" + to_string(y);
-    }
+    int getMonth();
+    int getDay();
+    int getYear();
+    int getHour();
+    int getMinute();
+    int getSecond();
+    string getDate();
 };
+Date::Date(int month, int day, int year, int hour, int minute, int second)
+{
+    this->month = month;
+    this->day = day;
+    this->year = year;
+    this->hour = hour;
+    this->minute = minute;
+    this->second = second;
+}
+Date::Date()
+{
+    time_t unixNow = time(NULL);
+    tm *now = localtime(&unixNow);
+
+    this->month = now->tm_mon + 1;
+    this->day = now->tm_mday;
+    this->year = now->tm_year + 1900;
+    this->hour = now->tm_hour;
+    this->minute = now->tm_min;
+    this->second = now->tm_sec;
+}
+
+void Date::dateTest()
+{
+    int month = 12;
+    int day = 7;
+    int year = 2000;
+    int hour = 12;
+    int minute = 0;
+    int second = 30;
+
+    Date d(month, day, year, hour, minute, second);
+    Date dd;
+
+    time_t unixNow = time(NULL);
+    tm *now = localtime(&unixNow);
+
+    if (month == d.getMonth() && now->tm_mon + 1 == dd.getMonth())
+        cout << "getMonth() is working\n";
+    else cout << "getMonth() is not working\n";
+
+    if (day == d.getDay() && now->tm_mday == dd.getDay())
+        cout << "getDay() is working\n";
+    else cout << "getDay() is not working\n";
+
+    if (year == d.getYear() && now->tm_year + 1900 == dd.getYear())
+        cout << "getYear() is working\n";
+    else cout << "getYear() is not working\n";
+
+    if (hour == d.getHour() && now->tm_hour == dd.getHour())
+        cout << "getHour() is working\n";
+    else cout << "getHour() is not working\n";
+
+    if (minute == d.getMinute() && now->tm_min == dd.getMinute())
+        cout << "getMinute() is working\n";
+    else cout << "getMinute() is not working\n";
+
+    if (second == d.getSecond() && now->tm_sec == dd.getSecond())
+        cout << "getSecond() is working\n";
+    else cout << "getSecond() is not working\n";
+
+    cout << endl;
+}
+
+int Date::getMonth()
+{
+    return month;
+}
+int Date::getDay()
+{
+    return day;
+}
+int Date::getYear()
+{
+    return year;
+}
+
+string Date::getDate()
+{
+    string date = to_string(month) + "/" + to_string(day) + "/" + to_string(year)
+        + " " + to_string(hour) + ":";
+
+    if (minute < 10) date += "0" + to_string(minute) + ":";
+    else date += to_string(minute) + ":";
+
+    if (second < 10) date += "0" + to_string(second);
+    else date += to_string(second);
+
+    return date;
+}
+
+int Date::getHour()
+{
+    return hour;
+}
+int Date::getMinute()
+{
+    return minute;
+}
+int Date::getSecond()
+{
+    return second;
+}
 
 // -------------------------------------------------------------------------
 // Specification A4 - Component Test Grade Conversion
@@ -308,7 +369,7 @@ void unitTest()
     if (working) cout << "getLetterGrade(int) is working\n";
     else cout << "getLetterGrade(int) is not working\n";
     
-    cout << "--------------------------\n\n";
+    cout << "--------------------------\n" << endl;
 }
 
 // Specification C1 - Program Greeting Function
@@ -317,5 +378,6 @@ void programGreeting()
     Date now;
     cout << "James Armstrong - GPA program\n";
     cout << "Current date: " << now.getDate() << '\n';
-    cout << "Due: Feb. 16, 2020\n";
+    cout << "Due: 2/16/2020\n";
+    cout << endl;
 }
