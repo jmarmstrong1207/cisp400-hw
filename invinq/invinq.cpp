@@ -76,17 +76,13 @@ private:
     void logChange(Item x);
 
 public:
+    Inventory();
+    ~Inventory();
     void addItem();
     void editItem();
     void removeItem();
     void displayInventory();
-    Inventory();
     static int displayMenu();
-
-    ~Inventory()
-    {
-        delete[] items;
-    }
 };
 //----------------------------------------------
 
@@ -327,6 +323,11 @@ Inventory::Inventory()
     items = new Item[itemsSize];
 }
 
+Inventory::~Inventory()
+{
+    delete[] items;
+}
+
 // Specification C2 - Add Option
 void Inventory::addItem()
 {
@@ -397,7 +398,8 @@ void Inventory::editItem()
     // Don't edit an item if inventory is empty
     if (itemsSize == 0)
     {
-        cout << "Inventory is empty. Add items.\n" << endl;
+        cout << "Inventory is empty. Add items.\n"
+             << endl;
         return;
     }
 
@@ -509,7 +511,8 @@ void Inventory::removeItem()
     // Don't edit an item if inventory is empty
     if (itemsSize == 0)
     {
-        cout << "Inventory is empty. Add items.\n" << endl;
+        cout << "Inventory is empty. Add items.\n"
+             << endl;
         return;
     }
 
