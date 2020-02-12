@@ -339,15 +339,14 @@ void Inventory::addItem()
     // Add description
 
     cout << "Give description (22 char max): ";
-    cin >> description;
+    cin.ignore();
+    getline(cin, description);
 
     // Specification A2 - Validate Inventory
-    while (!cin || description.size() > 22)
+    while (description.size() > 22)
     {
-        cout << "That is an invalid input. Please try again: ";
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cin >> description;
+        cout << "The description must be 22 characters max. Please try again: ";
+        getline(cin, description);
     }
     x.setDescription(description);
 
@@ -398,7 +397,7 @@ void Inventory::editItem()
     // Don't edit an item if inventory is empty
     if (itemsSize == 0)
     {
-        cout << "Inventory is empty. Add items." << endl;
+        cout << "Inventory is empty. Add items.\n" << endl;
         return;
     }
 
@@ -510,7 +509,7 @@ void Inventory::removeItem()
     // Don't edit an item if inventory is empty
     if (itemsSize == 0)
     {
-        cout << "Inventory is empty. Add items." << endl;
+        cout << "Inventory is empty. Add items.\n" << endl;
         return;
     }
 
