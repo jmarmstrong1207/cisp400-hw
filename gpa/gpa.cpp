@@ -375,9 +375,8 @@ void unitTest()
 // Specification C1 - Program Greeting Function
 void programGreeting()
 {
-    Date now;
+    Date dueDate(2, 16, 2020, 23, 59, 59);
     cout << "James Armstrong - GPA program\n";
-    cout << "Current date: " << now.getDate() << '\n';
-    cout << "Due: 2/16/2020\n";
+    cout << "Due date: " << dueDate.getDate() << '\n';
     cout << endl;
 }
