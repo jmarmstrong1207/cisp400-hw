@@ -332,7 +332,7 @@ void Inventory::addItem()
 {
     Item x;
     string description;
-    unsigned int quantity;
+    int quantity;
     double cost;
 
     //----------------------------------------------
@@ -357,9 +357,9 @@ void Inventory::addItem()
     cin >> quantity;
 
     // Specification A2 - Validate Inventory
-    while (!cin)
+    while (!cin || quantity < 0)
     {
-        cout << "That is an invalid input. Please try again: ";
+        cout << "That is an invalid input. Please try again (must be >0): ";
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cin >> quantity;
@@ -369,13 +369,13 @@ void Inventory::addItem()
     //----------------------------------------------
     // Add cost
 
-    cout << "Give cost: ";
+    cout << "Give cost (must be >0): ";
     cin >> cost;
 
     // Specification A2 - Validate Inventory
     while (!cin || cost < 0)
     {
-        cout << "That is an invalid input. Please try again: ";
+        cout << "That is an invalid input. Please try again (must be >0): ";
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cin >> cost;
