@@ -14,6 +14,8 @@ using namespace std;
 // Function prototypes
 void programGreeting();
 
+//----------------------------------------------
+// Class prototypes
 // Specification B1 - OOP
 class Date
 {
@@ -86,6 +88,7 @@ public:
         delete[] items;
     }
 };
+//----------------------------------------------
 
 int main()
 {
@@ -237,14 +240,17 @@ int Date::getYear()
 
 string Date::getDate()
 {
-    string date = to_string(month) + "/" + to_string(day) + "/" + to_string(year)
-        + " " + to_string(hour) + ":";
+    string date = to_string(month) + "/" + to_string(day) + "/" + to_string(year) + " " + to_string(hour) + ":";
 
-    if (minute < 10) date += "0" + to_string(minute) + ":";
-    else date += to_string(minute) + ":";
+    if (minute < 10)
+        date += "0" + to_string(minute) + ":";
+    else
+        date += to_string(minute) + ":";
 
-    if (second < 10) date += "0" + to_string(second);
-    else date += to_string(second);
+    if (second < 10)
+        date += "0" + to_string(second);
+    else
+        date += to_string(second);
 
     return date;
 }
@@ -264,6 +270,7 @@ int Date::getSecond()
 
 //----------------------------------------------
 // Item class methods
+
 Item::Item()
 {
     description = "";
@@ -312,6 +319,7 @@ void Item::setDate()
     dateAdded = now;
 }
 //----------------------------------------------
+// Inventory class methods
 
 Inventory::Inventory()
 {
@@ -327,6 +335,9 @@ void Inventory::addItem()
     unsigned int quantity;
     double cost;
 
+    //----------------------------------------------
+    // Add description
+
     cout << "Give description (22 char max): ";
     cin >> description;
 
@@ -339,6 +350,9 @@ void Inventory::addItem()
         cin >> description;
     }
     x.setDescription(description);
+
+    //----------------------------------------------
+    // Add quantity
 
     cout << "Give quantity (must be >0): ";
     cin >> quantity;
@@ -353,6 +367,9 @@ void Inventory::addItem()
     }
     x.setQuantity(quantity);
 
+    //----------------------------------------------
+    // Add cost
+
     cout << "Give cost: ";
     cin >> cost;
 
@@ -365,9 +382,11 @@ void Inventory::addItem()
         cin >> cost;
     }
     x.setCost(cost);
+    //----------------------------------------------
 
     x.setDate();
 
+    // Add one more slot in the array and append new item
     incrementItemsArray();
     items[itemsSize - 1] = x;
     logChange(x);
@@ -376,11 +395,15 @@ void Inventory::addItem()
 // Specification A1 - Edit Inventory
 void Inventory::editItem()
 {
+    // Don't edit an item if inventory is empty
     if (itemsSize == 0)
     {
         cout << "Inventory is empty. Add items." << endl;
         return;
     }
+
+    //----------------------------------------------
+    // Choose item to edit
 
     int answer = 0;
     cout << "Select item to edit:\n";
@@ -399,6 +422,9 @@ void Inventory::editItem()
         cin >> answer;
     }
 
+    //----------------------------------------------
+    // Choose property to edit
+
     int propertyToEdit = 0;
     cout << "What property to edit (Pick #)?\n";
     cout << "1.) Description\n";
@@ -415,6 +441,9 @@ void Inventory::editItem()
         cin >> propertyToEdit;
     }
 
+    //----------------------------------------------
+
+    // If user chose to edit description
     if (propertyToEdit == 1)
     {
         string description = "";
@@ -432,6 +461,8 @@ void Inventory::editItem()
         }
         items[answer - 1].setDescription(description);
     }
+
+    // If user chose to edit quantity
     else if (propertyToEdit == 2)
     {
         unsigned int quantity = 0;
@@ -439,7 +470,7 @@ void Inventory::editItem()
         cout << "Give new quantity (must be >0): ";
         cin >> quantity;
 
-        // Specification A2 - Validate Inventory 
+        // Specification A2 - Validate Inventory
         while (!cin)
         {
             if (quantity < 0)
@@ -452,12 +483,14 @@ void Inventory::editItem()
         }
         items[answer - 1].setQuantity(quantity);
     }
+
+    // If user chose to edit cost
     else
     {
         double cost;
         cout << "Give cost: ";
         cin >> cost;
-        
+
         // Specification A2 - Validate Inventory
         while (!cin || cost < 0)
         {
@@ -474,6 +507,7 @@ void Inventory::editItem()
 //Specification B2 - Delete Inventory Item
 void Inventory::removeItem()
 {
+    // Don't edit an item if inventory is empty
     if (itemsSize == 0)
     {
         cout << "Inventory is empty. Add items." << endl;
@@ -483,9 +517,7 @@ void Inventory::removeItem()
     int answer = 0;
     cout << "Select item to remove:\n";
     for (int i = 0; i < itemsSize; i++)
-    {
         cout << i + 1 << ".) " << items[i].getDescription() << '\n';
-    }
     cin >> answer;
 
     // Specification A2 - Validate Inventory
@@ -508,15 +540,15 @@ void Inventory::displayInventory()
         cout << "Inventory is empty. Add items." << endl;
         return;
     }
-
     for (int i = 0; i < itemsSize; i++)
     {
         cout << "Item " << i + 1 << ":\n";
         cout << "Description: " << items[i].getDescription() << '\n';
         cout << "Quantity: " << items[i].getQuantity() << '\n';
-        cout << "Cost: $" <<items[i].getCost() << '\n';
+        cout << "Cost: $" << items[i].getCost() << '\n';
         cout << "Date added: ";
-        cout << items[i].getDateAdded().getDate() << '\n' << endl;
+        cout << items[i].getDateAdded().getDate() << '\n'
+             << endl;
     }
     cout << endl;
 }
@@ -552,7 +584,8 @@ void Inventory::decrementItemsArray()
 // Given an i, push every item from the right to left once starting at i
 void Inventory::removeIndex(int index)
 {
-    for (int i = index; i < itemsSize - 1; i++) items[i] = items[i + 1];
+    for (int i = index; i < itemsSize - 1; i++)
+        items[i] = items[i + 1];
 }
 
 // Specification A3 - Logfile
