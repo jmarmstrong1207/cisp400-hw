@@ -13,10 +13,11 @@ using namespace std;
 
 // Function prototypes
 void programGreeting();
+void unitTest();
 
 //----------------------------------------------
 // Class prototypes
-// Specification B1 - OOP
+// Specification B1 - Date class
 class Date
 {
 private:
@@ -31,7 +32,7 @@ public:
     Date(int month, int day, int year, int hour, int minute, int second);
     Date();
 
-    static void dateTest();
+    static void componentTest();
 
     int getMonth();
     int getDay();
@@ -54,6 +55,8 @@ private:
 public:
     Item();
 
+    static void componentTest();
+
     string getDescription();
     void setDescription(string x);
     unsigned int getQuantity();
@@ -62,33 +65,40 @@ public:
     void setCost(double x);
     Date getDateAdded();
     void setDate();
+    void operator >>(ostream& x);
 };
 
 class Inventory
 {
 private:
     int itemsSize;
-    Item *items; // Specification C1 - Dynamic Array
+    Item *items; // Specification C2 - Dynamic Array
 
     void incrementItemsArray();
     void decrementItemsArray();
     void removeIndex(int index);
-    void logChange(Item x);
 
 public:
     Inventory();
     ~Inventory();
+
+    static void componentTest();
+
     void addItem();
     void editItem();
     void removeItem();
     void displayInventory();
     static int displayMenu();
+    void operator <<(Item x);
 };
 //----------------------------------------------
 
 int main()
 {
     programGreeting();
+
+    // Specification A4 - UnitTest() method in main()
+    unitTest();
     Inventory x;
 
     bool quit = false;
@@ -111,7 +121,17 @@ int main()
     return 0;
 }
 
-// Specification C4 - Main Menu
+void unitTest()
+{
+    cout << "---------------------------\n";
+    cout << "TESTING\n\n";
+    Date::componentTest();
+    Item::componentTest();
+    Inventory::componentTest();
+    cout << "---------------------------\n";
+}
+
+// Specification C1 - Alpha Menu
 int Inventory::displayMenu()
 {
     int answer = 0;
@@ -124,7 +144,7 @@ int Inventory::displayMenu()
     cout << "5.) Quit\n";
     cin >> answer;
 
-    // Specification C5 - Validate Menu
+    // Specification B3 - Menu Input Validation
     while (!cin || !(answer <= 5 && answer >= 1))
     {
         cout << "That is an invalid input. Please try again: ";
@@ -173,7 +193,8 @@ Date::Date()
     this->second = now->tm_sec;
 }
 
-void Date::dateTest()
+//Specification B2 - ComponentTest method in Date
+void Date::componentTest()
 {
     int month = 12;
     int day = 7;
@@ -188,6 +209,7 @@ void Date::dateTest()
     time_t unixNow = time(NULL);
     tm *now = localtime(&unixNow);
 
+    // Testing the 2 constructors
     if (month == d.getMonth() && now->tm_mon + 1 == dd.getMonth())
         cout << "getMonth() is working\n";
     else
@@ -277,6 +299,24 @@ Item::Item()
     dateAdded = now;
 }
 
+void Item::componentTest()
+{
+    Item a;
+    a.setDescription("desc");
+    a.setCost(101);
+    a.setQuantity(100);
+
+    (a.getDescription() == "desc") ? cout << "Item description works\n" : 
+        cout << "Item description does not work\n";
+
+    (a.getCost() == 101) ? cout << "Item cost works\n" : 
+        cout << "Item cost does not work\n";
+
+    (a.getQuantity() == 100) ? cout << "Item quantity works\n" : 
+        cout << "Item quantity does not work\n";
+    
+    cout << endl;
+}
 string Item::getDescription()
 {
     return description;
@@ -314,6 +354,18 @@ void Item::setDate()
     Date now;
     dateAdded = now;
 }
+
+// Display item operator
+// Specification A3 - Overload operator»
+void Item::operator>>(ostream& x)
+{
+    x << "Description: " << getDescription() << '\n';
+    x << "Quantity: " << getQuantity() << '\n';
+    x << "Cost: $" << getCost() << '\n';
+    x << "Date added: ";
+    x << getDateAdded().getDate() << '\n'
+        << endl;
+}
 //----------------------------------------------
 // Inventory class methods
 
@@ -328,7 +380,26 @@ Inventory::~Inventory()
     delete[] items;
 }
 
-// Specification C2 - Add Option
+void Inventory::componentTest()
+{
+    Inventory x;
+    Item a;
+    a.setDescription("desc");
+    a.setCost(101);
+    a.setQuantity(100);
+
+    x << a;
+    (x.items[0].getDescription() == "desc") ? cout << "Inventory adding works\n" :
+        cout << "Inventory adding doesn't work\n";
+    
+    x.decrementItemsArray();
+    (x.itemsSize == 0) ? cout << "Inventory decrementing works\n" :
+        cout << "Inventory decrementing doesn't work\n" ;
+    
+    cout << endl;
+}
+
+// Specification C2 - Resize Array - add to end
 void Inventory::addItem()
 {
     Item x;
@@ -343,7 +414,7 @@ void Inventory::addItem()
     cin.ignore();
     getline(cin, description);
 
-    // Specification A2 - Validate Inventory
+    // Specification B4 - Inventory Entry Input Validation
     while (description.size() > 22)
     {
         cout << "The description must be 22 characters max. Please try again: ";
@@ -357,7 +428,7 @@ void Inventory::addItem()
     cout << "Give quantity (must be >0): ";
     cin >> quantity;
 
-    // Specification A2 - Validate Inventory
+    // Specification B4 - Inventory Entry Input Validation
     while (!cin || quantity < 0)
     {
         cout << "That is an invalid input. Please try again (must be >0): ";
@@ -373,7 +444,7 @@ void Inventory::addItem()
     cout << "Give cost (must be >0): ";
     cin >> cost;
 
-    // Specification A2 - Validate Inventory
+    // Specification B4 - Inventory Entry Input Validation
     while (!cin || cost < 0)
     {
         cout << "That is an invalid input. Please try again (must be >0): ";
@@ -386,10 +457,7 @@ void Inventory::addItem()
 
     x.setDate();
 
-    // Add one more slot in the array and append new item
-    incrementItemsArray();
-    items[itemsSize - 1] = x;
-    logChange(x);
+    *this << x;
 }
 
 // Specification A1 - Edit Inventory
@@ -414,7 +482,7 @@ void Inventory::editItem()
     }
     cin >> answer;
 
-    // Specification A2 - Validate Inventory
+    // Specification B4 - Inventory Entry Input Validation
     while (!cin || !(answer <= itemsSize && answer > 0))
     {
         cout << "Invalid input. Please try again: ";
@@ -433,7 +501,7 @@ void Inventory::editItem()
     cout << "3.) Cost\n";
     cin >> propertyToEdit;
 
-    // Specification A2 - Validate Inventory
+    // Specification B4 - Inventory Entry Input Validation
     while (!cin || !(propertyToEdit <= 3 && propertyToEdit > 0))
     {
         cout << "Invalid input. Please try again: ";
@@ -452,7 +520,7 @@ void Inventory::editItem()
         cout << "Give new description (22 char max): ";
         cin >> description;
 
-        // Specification A2 - Validate Inventory
+        // Specification B4 - Inventory Entry Input Validation
         while (!cin || description.size() > 22)
         {
             cout << "That is an invalid input. Please try again: ";
@@ -471,7 +539,7 @@ void Inventory::editItem()
         cout << "Give new quantity (must be >0): ";
         cin >> quantity;
 
-        // Specification A2 - Validate Inventory
+        // Specification B4 - Inventory Entry Input Validation
         while (!cin)
         {
             if (quantity < 0)
@@ -492,7 +560,7 @@ void Inventory::editItem()
         cout << "Give cost: ";
         cin >> cost;
 
-        // Specification A2 - Validate Inventory
+        // Specification B4 - Inventory Entry Input Validation
         while (!cin || cost < 0)
         {
             cout << "That is an invalid input. Please try again: ";
@@ -505,7 +573,7 @@ void Inventory::editItem()
     cout << endl;
 }
 
-//Specification B2 - Delete Inventory Item
+// Specification C3 - Resize Array - subtract from end
 void Inventory::removeItem()
 {
     // Don't edit an item if inventory is empty
@@ -522,7 +590,6 @@ void Inventory::removeItem()
         cout << i + 1 << ".) " << items[i].getDescription() << '\n';
     cin >> answer;
 
-    // Specification A2 - Validate Inventory
     while (!cin || !(answer <= itemsSize && answer > 0))
     {
         cout << "Invalid input. Please try again: ";
@@ -534,7 +601,6 @@ void Inventory::removeItem()
     decrementItemsArray();
 }
 
-// Specification C3 - Display Option
 void Inventory::displayInventory()
 {
     if (itemsSize == 0)
@@ -545,18 +611,12 @@ void Inventory::displayInventory()
     for (int i = 0; i < itemsSize; i++)
     {
         cout << "Item " << i + 1 << ":\n";
-        cout << "Description: " << items[i].getDescription() << '\n';
-        cout << "Quantity: " << items[i].getQuantity() << '\n';
-        cout << "Cost: $" << items[i].getCost() << '\n';
-        cout << "Date added: ";
-        cout << items[i].getDateAdded().getDate() << '\n'
-             << endl;
+        items[i] >> cout;
     }
     cout << endl;
 }
 
 // Increment array size by one.
-// Specification B2 - Add Elements
 void Inventory::incrementItemsArray()
 {
     Item *temp = new Item[itemsSize + 1];
@@ -570,7 +630,6 @@ void Inventory::incrementItemsArray()
 }
 
 // Decrement array size by one.
-// Specification B3 - Shrink Dynamic Array
 void Inventory::decrementItemsArray()
 {
     Item *temp = new Item[itemsSize - 1];
@@ -590,10 +649,10 @@ void Inventory::removeIndex(int index)
         items[i] = items[i + 1];
 }
 
-// Specification A3 - Logfile
-void Inventory::logChange(Item x)
+// Add item operator
+// Specification A2 - Overload operator«
+void Inventory::operator<<(Item x)
 {
-    ofstream output("log.txt", ofstream::app);
-    output << x.getDateAdded().getDate() << " - " << x.getDescription() << " Added\n";
-    output.close();
+   incrementItemsArray();
+   items[itemsSize - 1] = x;
 }

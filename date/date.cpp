@@ -19,7 +19,7 @@ public:
     Date(int month, int day, int year, int hour, int minute, int second);
     Date();
 
-    static void dateTest();
+    static void componentTest();
 
     int getMonth();
     int getDay();
@@ -52,7 +52,7 @@ Date::Date()
     this->second = now->tm_sec;
 }
 
-void Date::dateTest()
+void Date::componentTest()
 {
     int month = 12;
     int day = 7;
