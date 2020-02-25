@@ -110,14 +110,23 @@ int main()
         {
         case 1:
             x.addItem();
+            break;
+            
         case 2:
             x.removeItem();
+            break;
+
         case 3:
             x.editItem();
+            break;
+
         case 4:
             x.displayInventory();
+            break;
+
         case 5:
             quit = true;
+            break;
         }
     }
     return 0;
