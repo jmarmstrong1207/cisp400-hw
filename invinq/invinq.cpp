@@ -65,7 +65,7 @@ public:
     void setCost(double x);
     Date getDateAdded();
     void setDate();
-    void operator >>(ostream& x);
+    void operator>>(ostream &x);
 };
 
 class Inventory
@@ -89,7 +89,7 @@ public:
     void removeItem();
     void displayInventory();
     static int displayMenu();
-    void operator <<(Item x);
+    void operator<<(Item x);
 };
 //----------------------------------------------
 
@@ -106,18 +106,29 @@ int main()
     {
         int answer = Inventory::displayMenu();
 
-        if (answer == 1)
+        switch (answer)
+        {
+        case 1:
             x.addItem();
-        else if (answer == 2)
+            break;
+            
+        case 2:
             x.removeItem();
-        else if (answer == 3)
-            x.editItem();
-        else if (answer == 4)
-            x.displayInventory();
-        else if (answer == 5)
-            quit = true;
-    }
+            break;
 
+        case 3:
+            x.editItem();
+            break;
+
+        case 4:
+            x.displayInventory();
+            break;
+
+        case 5:
+            quit = true;
+            break;
+        }
+    }
     return 0;
 }
 
@@ -306,15 +317,12 @@ void Item::componentTest()
     a.setCost(101);
     a.setQuantity(100);
 
-    (a.getDescription() == "desc") ? cout << "Item description works\n" : 
-        cout << "Item description does not work\n";
+    (a.getDescription() == "desc") ? cout << "Item description works\n" : cout << "Item description does not work\n";
 
-    (a.getCost() == 101) ? cout << "Item cost works\n" : 
-        cout << "Item cost does not work\n";
+    (a.getCost() == 101) ? cout << "Item cost works\n" : cout << "Item cost does not work\n";
 
-    (a.getQuantity() == 100) ? cout << "Item quantity works\n" : 
-        cout << "Item quantity does not work\n";
-    
+    (a.getQuantity() == 100) ? cout << "Item quantity works\n" : cout << "Item quantity does not work\n";
+
     cout << endl;
 }
 string Item::getDescription()
@@ -357,14 +365,14 @@ void Item::setDate()
 
 // Display item operator
 // Specification A3 - Overload operator»
-void Item::operator>>(ostream& x)
+void Item::operator>>(ostream &x)
 {
     x << "Description: " << getDescription() << '\n';
     x << "Quantity: " << getQuantity() << '\n';
     x << "Cost: $" << getCost() << '\n';
     x << "Date added: ";
     x << getDateAdded().getDate() << '\n'
-        << endl;
+      << endl;
 }
 //----------------------------------------------
 // Inventory class methods
@@ -389,13 +397,11 @@ void Inventory::componentTest()
     a.setQuantity(100);
 
     x << a;
-    (x.items[0].getDescription() == "desc") ? cout << "Inventory adding works\n" :
-        cout << "Inventory adding doesn't work\n";
-    
+    (x.items[0].getDescription() == "desc") ? cout << "Inventory adding works\n" : cout << "Inventory adding doesn't work\n";
+
     x.decrementItemsArray();
-    (x.itemsSize == 0) ? cout << "Inventory decrementing works\n" :
-        cout << "Inventory decrementing doesn't work\n" ;
-    
+    (x.itemsSize == 0) ? cout << "Inventory decrementing works\n" : cout << "Inventory decrementing doesn't work\n";
+
     cout << endl;
 }
 
@@ -513,7 +519,9 @@ void Inventory::editItem()
     //----------------------------------------------
 
     // If user chose to edit description
-    if (propertyToEdit == 1)
+    switch (propertyToEdit)
+    {
+    case 1:
     {
         string description = "";
 
@@ -529,10 +537,12 @@ void Inventory::editItem()
             cin >> description;
         }
         items[answer - 1].setDescription(description);
+
+        break;
     }
 
     // If user chose to edit quantity
-    else if (propertyToEdit == 2)
+    case 2:
     {
         unsigned int quantity = 0;
 
@@ -551,10 +561,11 @@ void Inventory::editItem()
             cin >> quantity;
         }
         items[answer - 1].setQuantity(quantity);
+        break;
     }
 
     // If user chose to edit cost
-    else
+    default:
     {
         double cost;
         cout << "Give cost: ";
@@ -569,6 +580,7 @@ void Inventory::editItem()
             cin >> cost;
         }
         items[answer - 1].setCost(cost);
+    }
     }
     cout << endl;
 }
@@ -653,6 +665,6 @@ void Inventory::removeIndex(int index)
 // Specification A2 - Overload operator«
 void Inventory::operator<<(Item x)
 {
-   incrementItemsArray();
-   items[itemsSize - 1] = x;
+    incrementItemsArray();
+    items[itemsSize - 1] = x;
 }
