@@ -90,6 +90,8 @@ public:
     int getEnemyShipCount();
 
     bool isMultiFire();
+
+	void clearScreen();
 };
 
 // Function prototypes
@@ -135,7 +137,7 @@ int main()
 
             // Clear the console to refresh the new map, which will be displayed the next time
             // it's the player's turn. Unnecessary to display it for the AI.
-            system("clear");
+			x.clearScreen();
 
             x.shootEnemy(row, col);
             playerShipCount = x.getPlayerShipCount();
@@ -630,7 +632,7 @@ void BattleshipGame::toggleCheats()
     else
         mapCheats = true;
 
-    system("clear");
+	clearScreen();
     displayMaps();
 }
 
@@ -648,7 +650,7 @@ void BattleshipGame::shootEnemy(int row, int col)
     // Specification A1 - Adv Input Validation
     else if (enemyMap[row][col] == 'X')
     {
-        system("clear");
+		clearScreen();
         cout << "You cannot shoot where you already shot. Please try again.\n";
         cout << "------------------------------\n";
         displayMaps();
@@ -657,7 +659,7 @@ void BattleshipGame::shootEnemy(int row, int col)
 
         int row = static_cast<int>(answer[0]) - 65;
         int col = (answer.size() == 3) ? 9 : static_cast<int>(answer[1]) - 49;
-        system("clear");
+		clearScreen();
         shootEnemy(row, col);
     }
     else
@@ -816,4 +818,13 @@ int BattleshipGame::getEnemyShipCount()
 bool BattleshipGame::isMultiFire()
 {
     return multiFire;
+}
+
+void BattleshipGame::clearScreen()
+{
+	for (int i = 0; i < 20; i++)
+	{
+		cout << '\n';
+	}
+	cout << endl;
 }
