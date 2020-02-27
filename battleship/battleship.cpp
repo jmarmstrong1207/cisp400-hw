@@ -769,7 +769,6 @@ bool BattleshipGame::isPlayerShipSunk(char x)
 
 bool BattleshipGame::isEnemyShipSunk(char x)
 {
-    int count = 0;
     for (int i = 0; i < mapSize; i++)
     {
         for (int j = 0; j < mapSize; j++)
