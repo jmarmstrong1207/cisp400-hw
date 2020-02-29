@@ -632,7 +632,7 @@ void BattleshipGame::toggleCheats()
     else
         mapCheats = true;
 
-	clearScreen();
+    clearScreen();
     displayMaps();
 }
 
