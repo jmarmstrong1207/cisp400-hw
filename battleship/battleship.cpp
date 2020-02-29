@@ -99,6 +99,8 @@ void programGreeting();
 
 int main()
 {
+    srand(time(0));
+
     programGreeting();
 
     BattleshipGame x;
@@ -351,7 +353,17 @@ char Ship::getMapChar()
 // Randomizes both sides
 void BattleshipGame::placeShips()
 {
-    srand(time(0));
+
+    Ship carrier("carrier", 5, 'C');
+    Ship battleship("battleship", 4, 'B');
+    Ship cruiser("cruiser", 3, 'A');
+    Ship submarine("submarine", 3, 'S');
+    Ship destroyer("destroyer", 2, 'D');
+    gameShips[0] = carrier;
+    gameShips[1] = battleship;
+    gameShips[2] = cruiser;
+    gameShips[3] = submarine;
+    gameShips[4] = destroyer;
 
     // Place user ships
     for (Ship x : gameShips)
@@ -552,6 +564,7 @@ BattleshipGame::BattleshipGame()
     mapSize = 10;
     gameShipsSize = 5;
 
+    // Set up map with spaces to make it empty
     for (int i = 0; i < mapSize; i++)
     {
         for (int j = 0; j < mapSize; j++)
@@ -561,16 +574,6 @@ BattleshipGame::BattleshipGame()
         }
     }
 
-    Ship carrier("carrier", 5, 'C');
-    Ship battleship("battleship", 4, 'B');
-    Ship cruiser("cruiser", 3, 'A');
-    Ship submarine("submarine", 3, 'S');
-    Ship destroyer("destroyer", 2, 'D');
-    gameShips[0] = carrier;
-    gameShips[1] = battleship;
-    gameShips[2] = cruiser;
-    gameShips[3] = submarine;
-    gameShips[4] = destroyer;
     placeShips();
 }
 
@@ -626,9 +629,7 @@ string BattleshipGame::getUserInput()
 void BattleshipGame::toggleCheats()
 {
     if (mapCheats)
-    {
         mapCheats = false;
-    }
     else
         mapCheats = true;
 
@@ -680,9 +681,7 @@ void BattleshipGame::shootPlayer(int row, int col)
     // Specification C2 - Prohibit AI wasted shots
     // Coordinates previously hit are marked with 'X'.
     else if (playerMap[row][col] == 'X')
-    {
         shootPlayer(rand() % 9, rand() % 9);
-    }
     else
         cout << "AI MISSED" << endl;
 
@@ -704,6 +703,7 @@ bool BattleshipGame::isPlayerWinner()
 {
     const int NUM_X_NEEDED = 5 + 4 + 3 + 3 + 2; // Numbers from size of each ship
 
+    // Counts the number of X's in the enemy's map 
     int xNum = 0;
     for (int i = 0; i < mapSize; i++)
     {
@@ -720,6 +720,7 @@ bool BattleshipGame::isEnemyWinner()
 {
     const int NUM_X_NEEDED = 5 + 4 + 3 + 3 + 2; // Numbers from size of each ship
 
+    // Count the number of X's in the player's map
     int xNum = 0;
     for (int i = 0; i < mapSize; i++)
     {
@@ -762,6 +763,7 @@ bool BattleshipGame::isPlayerShipSunk(char x)
     {
         for (int j = 0; j < mapSize; j++)
         {
+            // If the character still exists in the map, then the ship isn't sunk yet
             if (playerMap[i][j] == x)
                 return false;
         }
@@ -775,6 +777,7 @@ bool BattleshipGame::isEnemyShipSunk(char x)
     {
         for (int j = 0; j < mapSize; j++)
         {
+            // If the character still exists in the map, then the ship isn't sunk yet
             if (enemyMap[i][j] == x)
                 return false;
         }
