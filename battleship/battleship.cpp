@@ -626,9 +626,7 @@ string BattleshipGame::getUserInput()
 void BattleshipGame::toggleCheats()
 {
     if (mapCheats)
-    {
         mapCheats = false;
-    }
     else
         mapCheats = true;
 
