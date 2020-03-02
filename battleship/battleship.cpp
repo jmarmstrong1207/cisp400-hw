@@ -46,7 +46,6 @@ private:
     char mapChar; // The character to represent the ship in the map
 
 public:
-    Ship();
     Ship(string name, int size, char mapChar);
     int getSize();
     string getName();
@@ -321,14 +320,8 @@ int Date::getSecond()
 //--------------------------------------------------------------------------------------------------
 // Ship class methods
 
-Ship::Ship()
-{
-    name = "";
-    size = 0;
-    mapChar = '0';
-}
 
-Ship::Ship(string name, int size, char mapChar)
+Ship::Ship(string name = "", int size = 0, char mapChar = '0')
 {
     this->name = name;
     this->size = size;
