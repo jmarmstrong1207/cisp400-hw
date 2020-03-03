@@ -46,7 +46,7 @@ private:
     char mapChar; // The character to represent the ship in the map
 
 public:
-    Ship(string name, int size, char mapChar);
+    Ship(string name = "", int size = 0, char mapChar = '0');
     int getSize();
     string getName();
     char getMapChar();
