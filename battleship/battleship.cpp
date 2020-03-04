@@ -130,7 +130,10 @@ int main()
             x.displayMaps();
             answer = x.getUserInput();
             if (answer == "q")
+            {
                 gameQuit = true;
+                break;
+            }
 
             // Converts the character to the coords by first converting it to ASCII, then subtracting
             // 65 (A in ascii) for row, and 49 (1) for col
@@ -580,7 +583,8 @@ BattleshipGame::BattleshipGame()
 string BattleshipGame::getUserInput()
 {
     string answer = "";
-    cout << "Type in a coordinate to fire (e.g. \"A1\"). Type \"/multifire\" for multifire mode:\n";
+    cout << "Type in a coordinate to fire (e.g. \"A1\"). Type \"/multifire\" for multifire mode, "
+        << "\"q\" to quit:\n";
 
     // MAP CHEATS COMMAND: "/cheat";
     cin >> answer;
