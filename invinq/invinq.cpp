@@ -46,9 +46,10 @@ public:
 class Item
 {
 private:
-    string description;
+    int id;
     unsigned int quantity;
-    double cost;
+    double wholesaleCost;
+    double retailCost;
 
     Date dateAdded;
 
@@ -57,12 +58,13 @@ public:
 
     static void componentTest();
 
-    string getDescription();
-    void setDescription(string x);
+    int getId();
+    void setId(int x);
     unsigned int getQuantity();
     void setQuantity(unsigned int x);
-    double getCost();
-    void setCost(double x);
+    double getWholesaleCost();
+    double getRetailCost();
+    void setWholesaleCost(double x);
     Date getDateAdded();
     void setDate();
     void operator>>(ostream &x);
@@ -302,9 +304,10 @@ int Date::getSecond()
 
 Item::Item()
 {
-    description = "";
+    id = 0;
     quantity = 0;
-    cost = 0;
+    retailCost = 0;
+    wholesaleCost = 0;
 
     Date now;
     dateAdded = now;
@@ -313,25 +316,27 @@ Item::Item()
 void Item::componentTest()
 {
     Item a;
-    a.setDescription("desc");
-    a.setCost(101);
+    a.setId(5000);
+    a.setWholesaleCost(101);
     a.setQuantity(100);
 
-    (a.getDescription() == "desc") ? cout << "Item description works\n" : cout << "Item description does not work\n";
+    (a.getId() == 5000) ? cout << "Item id works\n" : cout << "Item id does not work\n";
 
-    (a.getCost() == 101) ? cout << "Item cost works\n" : cout << "Item cost does not work\n";
+    (a.getWholesaleCost() == 101) ? cout << "Item wholesale cost works\n" : cout << "Item wholesale cost does not work\n";
+
+    (a.getRetailCost() == 202) ? cout << "Item retail cost works\n" : cout << "Item retail cost does not work\n";
 
     (a.getQuantity() == 100) ? cout << "Item quantity works\n" : cout << "Item quantity does not work\n";
 
     cout << endl;
 }
-string Item::getDescription()
+int Item::getId()
 {
-    return description;
+    return id;
 }
-void Item::setDescription(string x)
+void Item::setId(int x)
 {
-    description = x;
+    id = x;
 }
 
 unsigned int Item::getQuantity()
@@ -343,13 +348,20 @@ void Item::setQuantity(unsigned int x)
     quantity = x;
 }
 
-double Item::getCost()
+double Item::getRetailCost()
 {
-    return cost;
+    return retailCost;
 }
-void Item::setCost(double x)
+double Item::getWholesaleCost()
 {
-    cost = x;
+    return wholesaleCost;
+}
+
+// Automatically sets retail cost
+void Item::setWholesaleCost(double x)
+{
+    wholesaleCost = x;
+    retailCost = wholesaleCost * 2;
 }
 
 Date Item::getDateAdded()
@@ -367,9 +379,10 @@ void Item::setDate()
 // Specification A3 - Overload operator»
 void Item::operator>>(ostream &x)
 {
-    x << "Description: " << getDescription() << '\n';
+    x << "Description: " << getId() << '\n';
     x << "Quantity: " << getQuantity() << '\n';
-    x << "Cost: $" << getCost() << '\n';
+    x << "Wholesale Cost: $" << getWholesaleCost() << '\n';
+    x << "Retail Cost: $" << getRetailCost() << '\n';
     x << "Date added: ";
     x << getDateAdded().getDate() << '\n'
       << endl;
@@ -392,12 +405,12 @@ void Inventory::componentTest()
 {
     Inventory x;
     Item a;
-    a.setDescription("desc");
-    a.setCost(101);
+    a.setId(5000);
+    a.setWholesaleCost(101);
     a.setQuantity(100);
 
     x << a;
-    (x.items[0].getDescription() == "desc") ? cout << "Inventory adding works\n" : cout << "Inventory adding doesn't work\n";
+    (x.items[0].getId() == 5000) ? cout << "Inventory adding works\n" : cout << "Inventory adding doesn't work\n";
 
     x.decrementItemsArray();
     (x.itemsSize == 0) ? cout << "Inventory decrementing works\n" : cout << "Inventory decrementing doesn't work\n";
@@ -405,28 +418,40 @@ void Inventory::componentTest()
     cout << endl;
 }
 
+// Helper function for Inventory::addItem() and editItem()
+bool stringIsInt(string x)
+{
+    for (char c : x)
+    {
+        // Checks if character is not in btwn 48 and 57 in ASCII. That range is for integers
+        if (static_cast<int>(c) < 48 || static_cast<int>(c) > 57) return false;
+    }
+
+    return true;
+}
+
 // Specification C2 - Resize Array - add to end
 void Inventory::addItem()
 {
     Item x;
-    string description;
+    string id;
     int quantity;
     double cost;
 
     //----------------------------------------------
-    // Add description
+    // Add id	
 
-    cout << "Give description (22 char max): ";
+    cout << "Give ID (5 digits max): ";
     cin.ignore();
-    getline(cin, description);
+    getline(cin, id);
 
     // Specification B4 - Inventory Entry Input Validation
-    while (description.size() > 22)
+    while (id.size() > 5 || !stringIsInt(id))
     {
-        cout << "The description must be 22 characters max. Please try again: ";
-        getline(cin, description);
+        cout << "That is an invalid input. Please try again (must be <=5 digits): ";
+        getline(cin, id);
     }
-    x.setDescription(description);
+    x.setId(stoi(id));
 
     //----------------------------------------------
     // Add quantity
@@ -447,7 +472,7 @@ void Inventory::addItem()
     //----------------------------------------------
     // Add cost
 
-    cout << "Give cost (must be >0): ";
+    cout << "Give wholesale cost (must be >0, retail cost will be set x2 of wholesale): ";
     cin >> cost;
 
     // Specification B4 - Inventory Entry Input Validation
@@ -458,7 +483,7 @@ void Inventory::addItem()
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cin >> cost;
     }
-    x.setCost(cost);
+    x.setWholesaleCost(cost);
     //----------------------------------------------
 
     x.setDate();
@@ -484,7 +509,7 @@ void Inventory::editItem()
     cout << "Select item to edit:\n";
     for (int i = 0; i < itemsSize; i++)
     {
-        cout << i + 1 << ".) " << items[i].getDescription() << '\n';
+        cout << i + 1 << ".) " << items[i].getId() << '\n';
     }
     cin >> answer;
 
@@ -502,7 +527,7 @@ void Inventory::editItem()
 
     int propertyToEdit = 0;
     cout << "What property to edit (Pick #)?\n";
-    cout << "1.) Description\n";
+    cout << "1.) ID\n";
     cout << "2.) Quantity\n";
     cout << "3.) Cost\n";
     cin >> propertyToEdit;
@@ -518,25 +543,26 @@ void Inventory::editItem()
 
     //----------------------------------------------
 
-    // If user chose to edit description
+    // If user chose to edit id
     switch (propertyToEdit)
     {
     case 1:
     {
-        string description = "";
+        string id = "";
 
-        cout << "Give new description (22 char max): ";
-        cin >> description;
+        cout << "Give new ID (5 digits max): ";
+        cin.ignore();
+        getline(cin, id);
 
         // Specification B4 - Inventory Entry Input Validation
-        while (!cin || description.size() > 22)
+        while (id.size() > 5 || !stringIsInt(id))
         {
-            cout << "That is an invalid input. Please try again: ";
+            cout << "That is an invalid input. Please try again (must be <=5 digits): ";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cin >> description;
+            cin >> id	;
         }
-        items[answer - 1].setDescription(description);
+        items[answer - 1].setId(stoi(id));
 
         break;
     }
@@ -579,7 +605,7 @@ void Inventory::editItem()
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin >> cost;
         }
-        items[answer - 1].setCost(cost);
+        items[answer - 1].setWholesaleCost(cost);
     }
     }
     cout << endl;
@@ -599,7 +625,7 @@ void Inventory::removeItem()
     int answer = 0;
     cout << "Select item to remove:\n";
     for (int i = 0; i < itemsSize; i++)
-        cout << i + 1 << ".) " << items[i].getDescription() << '\n';
+        cout << i + 1 << ".) " << items[i].getId() << '\n';
     cin >> answer;
 
     while (!cin || !(answer <= itemsSize && answer > 0))
