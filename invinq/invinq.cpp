@@ -441,14 +441,14 @@ void Inventory::addItem()
     //----------------------------------------------
     // Add id	
 
-    cout << "Give ID (5 digits max): ";
+    cout << "Give ID (5 digits only): ";
     cin.ignore();
     getline(cin, id);
 
     // Specification B4 - Inventory Entry Input Validation
-    while (id.size() > 5 || !stringIsInt(id))
+    while (id.size() != 5 || !stringIsInt(id))
     {
-        cout << "That is an invalid input. Please try again (must be <=5 digits): ";
+        cout << "That is an invalid input. Please try again (must be 5 digits): ";
         getline(cin, id);
     }
     x.setId(stoi(id));
@@ -550,14 +550,14 @@ void Inventory::editItem()
     {
         string id = "";
 
-        cout << "Give new ID (5 digits max): ";
+        cout << "Give new ID (5 digits only): ";
         cin.ignore();
         getline(cin, id);
 
         // Specification B4 - Inventory Entry Input Validation
-        while (id.size() > 5 || !stringIsInt(id))
+        while (id.size() != 5 || !stringIsInt(id))
         {
-            cout << "That is an invalid input. Please try again (must be <=5 digits): ";
+            cout << "That is an invalid input. Please try again (must be 5 digits): ";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin >> id	;
