@@ -52,20 +52,97 @@ public:
     char getMapChar();
 };
 
-class BattleshipGame
+// Specification A3 - Child Classes
+class Carrier : public Ship
+{
+
+public:
+    Carrier(string name = "", int size = 0, char mapChar = '0')
+        : Ship(name, size, mapChar)
+        {}
+};
+class Battleship : public Ship
+{
+public:
+    Battleship(string name = "", int size = 0, char mapChar = '0')
+        : Ship(name, size, mapChar)
+        {}
+};
+class Cruiser : public Ship
+{
+public:
+    Cruiser(string name = "", int size = 0, char mapChar = '0')
+        : Ship(name, size, mapChar)
+        {}
+};
+class Submarine : public Ship
+{
+public:
+    Submarine(string name = "", int size = 0, char mapChar = '0')
+        : Ship(name, size, mapChar)
+        {}
+};
+class Destroyer : public Ship
+{
+public:
+    Destroyer(string name = "", int size = 0, char mapChar = '0')
+        : Ship(name, size, mapChar)
+    {}
+};
+
+
+// Keeps track of every move made
+class Move
 {
 private:
-    bool mapCheats;
-    bool multiFire;
+    friend ostream& operator<<(ostream&, Move);
     int mapSize;
-    int gameShipsSize;
-    Ship gameShips[5]; // List of ships available for the game
-
+    bool hit;
+    bool player;
+    
     char playerMap[10][10];
     char enemyMap[10][10];
 
+    // Coords of the move
+    char row;
+    char col;
+    
+
+public:
+
+    Move(char row, char col, bool hit, bool player, char playerMap[10][10], char enemyMap[10][10]);
+    Move();
+
+    void displayEnemyMap();
+    void displayPlayerMap();
+
+    bool isHit();
+    bool isPlayer();
+    char getRow();
+    char getCol();
+};
+
+
+class BattleshipGame
+{
+
+private:
+    friend void operator>>(BattleshipGame&, string&);
+    friend Move;
+    bool mapCheats;
+    bool multiFire;
+    int mapSize;
+    char playerMap[10][10];
+    char enemyMap[10][10];
+    int gameShipsSize;
+
+    Ship gameShips[5]; // List of ships available for the game
+
+    int movesSize;
+    Move *moves; // Used to replay the game
+
+
     void placeShips();
-    void logMove(int row, int col, bool hit, bool isPlayer);
     void displayPlayerMap();
     void displayEnemyMap();
     void displayEnemyMapHidden();
@@ -73,8 +150,13 @@ private:
 
 public:
     BattleshipGame();
+    ~BattleshipGame();
+    
     string getUserInput();
     void displayMaps();
+
+    char** getPlayerMap();
+    char** getEnemyMap();
 
     void shootEnemy(int row, int col);
     void shootPlayer(int row, int col);
@@ -91,6 +173,10 @@ public:
     bool isMultiFire();
 
 	void clearScreen();
+
+    void incrementMovesArray();
+    void addMove(Move m);
+    void replayGame();
 };
 
 // Function prototypes
@@ -127,7 +213,9 @@ int main()
         {
             playerTurns--;
             x.displayMaps();
-            answer = x.getUserInput();
+            x >> answer;
+
+            // Specification A1 - Resign Game
             if (answer == "q")
             {
                 gameQuit = true;
@@ -189,6 +277,21 @@ int main()
             }
         }
     }
+
+    string ans = "";
+    cout << "Do you want to watch a replay of your game? (y/n): ";
+    cin.ignore();
+    getline(cin, ans);
+
+    while (ans !=  "y" && ans != "n")
+    {
+        cout << "Invalid answer. Type y or n to watch a replay of your game: ";
+        getline(cin, ans);
+    }
+
+    // Specification A4 - Replay Finished Game
+    if (ans == "y") x.replayGame();
+
     return 0;
 }
 
@@ -197,7 +300,6 @@ void programGreeting()
     cout << "Welcome. This is is the game Battleship.\n";
     cout << "Author: James Armstrong\n";
 
-    // Specification A3 - Date Class in Program Greeting
     Date now;
     cout << "Today's date: " << now.getDate() << '\n';
 
@@ -324,7 +426,7 @@ int Date::getSecond()
 // Ship class methods
 
 
-Ship::Ship(string name = "", int size = 0, char mapChar = '0')
+Ship::Ship(string name, int size, char mapChar)
 {
     this->name = name;
     this->size = size;
@@ -350,11 +452,11 @@ char Ship::getMapChar()
 void BattleshipGame::placeShips()
 {
 
-    Ship carrier("carrier", 5, 'C');
-    Ship battleship("battleship", 4, 'B');
-    Ship cruiser("cruiser", 3, 'A');
-    Ship submarine("submarine", 3, 'S');
-    Ship destroyer("destroyer", 2, 'D');
+    Carrier carrier("carrier", 5, 'C');
+    Battleship battleship("battleship", 4, 'B');
+    Cruiser cruiser("cruiser", 3, 'A');
+    Submarine submarine("submarine", 3, 'S');
+    Destroyer destroyer("destroyer", 2, 'D');
     gameShips[0] = carrier;
     gameShips[1] = battleship;
     gameShips[2] = cruiser;
@@ -555,6 +657,9 @@ void BattleshipGame::displayEnemyMapHidden()
 
 BattleshipGame::BattleshipGame()
 {
+    movesSize = 0;
+    moves = new Move[movesSize];
+
     multiFire = false;
     mapCheats = false;
     mapSize = 10;
@@ -573,6 +678,11 @@ BattleshipGame::BattleshipGame()
     placeShips();
 }
 
+BattleshipGame::~BattleshipGame()
+{
+    delete[] moves;
+}
+
 string BattleshipGame::getUserInput()
 {
     string answer = "";
@@ -582,7 +692,7 @@ string BattleshipGame::getUserInput()
     // MAP CHEATS COMMAND: "/cheat";
     cin >> answer;
 
-    // Specification B1 - Validate Input
+    // Specification C3 - Validate Input
     while (
 
         // This needs to be absolutely true for anything else to be checked.
@@ -606,7 +716,7 @@ string BattleshipGame::getUserInput()
         cin >> answer;
     }
 
-    // Specification C3 - Secret Option
+    // Specification B1 - Secret Option
     if (answer == "/cheat")
     {
         toggleCheats();
@@ -643,9 +753,10 @@ void BattleshipGame::shootEnemy(int row, int col)
         cout << "PLAYER HAS HIT A SHIP" << endl;
         enemyMap[row][col] = 'X';
         hit = true;
+
     }
 
-    // Specification A1 - Adv Input Validation
+    // Specification B2 - Adv Input Validation
     else if (enemyMap[row][col] == 'X')
     {
 		clearScreen();
@@ -663,7 +774,13 @@ void BattleshipGame::shootEnemy(int row, int col)
     else
         cout << "PLAYER MISSED!" << endl;
 
-    logMove(row, col, hit, true);
+
+    // Convert to original answer so that moves array knows the coordinate
+    char r = static_cast<char>(row + 65);
+    char c = static_cast<char>(col + 49);
+
+    Move m(r, c, hit, true, playerMap, enemyMap);
+    addMove(m);
 }
 void BattleshipGame::shootPlayer(int row, int col)
 {
@@ -682,7 +799,11 @@ void BattleshipGame::shootPlayer(int row, int col)
     else
         cout << "AI MISSED" << endl;
 
-    logMove(row, col, hit, false);
+    // Convert to original answer so that moves array knows the coordinate
+    char r = static_cast<char>(row + 65);
+    char c = static_cast<char>(col + 49);
+    Move m(r, c, hit, false, playerMap, enemyMap);
+    addMove(m);
 }
 
 void BattleshipGame::displayMaps()
@@ -728,30 +849,6 @@ bool BattleshipGame::isEnemyWinner()
         }
     }
     return xNum == NUM_X_NEEDED;
-}
-
-//Specification B2 - Log file to Disk
-// row & col: the coordinates of the move.
-// hit: Was the move a hit or not
-void BattleshipGame::logMove(int row, int col, bool hit, bool isPlayer)
-{
-    ofstream logFile("log.txt", ios::app);
-
-    Date now;
-
-    logFile << now.getDate() << " | ";
-
-    if (hit)
-    {
-        (isPlayer) ? logFile << "Player hit coordinate [" << row << ", " << col << "]."
-                   : logFile << "AI hit coordinate [" << row << ", " << col << "].";
-    }
-    else
-    {
-        (isPlayer) ? logFile << "Player missed coordinate [" << row << ", " << col << "]."
-                   : logFile << "AI missed coordinate [" << row << ", " << col << "].";
-    }
-    logFile << "\n";
 }
 
 bool BattleshipGame::isPlayerShipSunk(char x)
@@ -827,4 +924,167 @@ void BattleshipGame::clearScreen()
 		cout << '\n';
 	}
 	cout << endl;
+}
+
+// Increment array size by one.
+void BattleshipGame::incrementMovesArray()
+{
+    Move *temp = new Move[movesSize + 1];
+    for (int i = 0; i < movesSize; i++)
+        temp[i] = moves[i];
+
+    delete[] moves;
+    moves = temp;
+    temp = nullptr;
+    movesSize++;
+}
+
+void BattleshipGame::addMove(Move m)
+{
+    incrementMovesArray();
+    moves[movesSize - 1] = m;
+}
+
+void BattleshipGame::replayGame()
+{
+    cout << "-------------------------------------\n";
+    for (int i = 0; i < movesSize; i++)
+    {
+        cout << moves[i];
+        /*
+        cout << "MOVE " << i + 1;
+        if (moves[i].isPlayer())
+            cout << " - PLAYER'S TURN: \n";
+        else
+            cout << " - AI'S TURN: \n";
+
+        cout << "Your map: \n";
+        moves[i].displayPlayerMap();
+        
+        cout << "AI map: \n";
+        moves[i].displayEnemyMap();
+
+
+        if (moves[i].isHit())
+            cout << "HIT - ";
+        else
+            cout << "MISS - ";
+        cout << moves[i].getRow() << moves[i].getCol() << '\n'; 
+
+        cout << endl;
+        */
+        cout << "-------------------------------------";
+    }
+    
+}
+
+//--------------------------------------------------------------------------------------------------
+// Move methods
+
+// Requires a copy of the map
+Move::Move(char row, char col, bool hit, bool player, char playerMap[10][10], char enemyMap[10][10])
+{
+    this->hit = hit;
+    this->player = player;
+    this->row = row;
+    this->col = col;
+    mapSize = 10;
+
+    for (int i = 0; i < 10; i++)
+    {
+        for (int j = 0; j < 10; j++)
+        {
+            this->playerMap[i][j] = playerMap[i][j];
+            this->enemyMap[i][j] = enemyMap[i][j];
+        }
+    }
+}
+
+Move::Move()
+{
+    hit = false;
+    player = false;
+    row = '0';
+    col = '0';
+    mapSize = 0;
+}
+
+void Move::displayPlayerMap()
+{
+    cout << "  1 2 3 4 5 6 7 8 9 10\n";
+    for (int i = 0; i < mapSize; i++)
+    {
+        cout << static_cast<char>(65 + i) << " ";
+
+        for (int j = 0; j < mapSize; j++)
+        {
+            cout << playerMap[i][j];
+            cout << " ";
+        }
+        cout << endl;
+    }
+}
+
+void Move::displayEnemyMap()
+{
+    cout << "  1 2 3 4 5 6 7 8 9 10\n";
+    for (int i = 0; i < mapSize; i++)
+    {
+        cout << static_cast<char>(65 + i) << " ";
+
+        for (int j = 0; j < mapSize; j++)
+        {
+            cout << enemyMap[i][j];
+            cout << " ";
+        }
+        cout << endl;
+    }
+}
+
+bool Move::isHit()
+{
+    return hit;
+}
+
+bool Move::isPlayer()
+{
+    return player;
+}
+
+char Move::getRow()
+{
+    return row;
+}
+char Move::getCol()
+{
+    return col;
+}
+
+// Specification C4 - Overload «
+ostream& operator<<(ostream &x, Move m)
+{
+    if (m.isPlayer())
+        cout << " - PLAYER'S TURN: \n";
+    else
+        cout << " - AI'S TURN: \n";
+
+    cout << "Your map: \n";
+    m.displayPlayerMap();
+        
+    cout << "AI map: \n";
+    m.displayEnemyMap();
+
+
+    if (m.isHit())
+        cout << "HIT - ";
+    else
+        cout << "MISS - ";
+    cout << m.getRow() << m.getCol() << '\n'; 
+    cout << endl;
+}
+
+//Specification B4 - Overload »
+void operator>>(BattleshipGame& b, string &s)
+{
+    s = b.getUserInput();
 }
