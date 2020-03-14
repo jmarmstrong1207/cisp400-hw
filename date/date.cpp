@@ -8,6 +8,8 @@ using namespace std;
 class Date
 {
 private:
+    friend ostream& operator<<(ostream&, Date);
+    friend istream& operator>>(istream&, Date&);
     int month;
     int day;
     int year;
@@ -20,6 +22,7 @@ public:
     Date();
 
     static void componentTest();
+    static void componentTestOperator();
 
     int getMonth();
     int getDay();
@@ -50,6 +53,14 @@ Date::Date()
     this->hour = now->tm_hour;
     this->minute = now->tm_min;
     this->second = now->tm_sec;
+}
+
+
+int main()
+{
+    Date::componentTestOperator();
+    Date::componentTest();
+    return 0;
 }
 
 void Date::componentTest()
@@ -94,6 +105,14 @@ void Date::componentTest()
     cout << endl;
 }
 
+void Date::componentTestOperator()
+{
+    Date d(0,0,0,0,0,0);
+    cout << "Input the day, month, year, hour, min, second for the date:\n";
+    cin >> d;
+    cout << d << endl;
+}
+
 int Date::getMonth()
 {
     return month;
@@ -135,4 +154,16 @@ int Date::getMinute()
 int Date::getSecond()
 {
     return second;
+}
+
+ostream& operator<<(ostream& o, Date d)
+{
+    cout << d.getDate();
+    return o;
+}
+
+istream& operator>>(istream& i, Date& d)
+{
+    i >> d.month >> d.day >> d.year >> d.hour >> d.minute >> d.second;
+    return i;
 }
