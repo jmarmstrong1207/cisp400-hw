@@ -158,7 +158,7 @@ int Date::getSecond()
 
 ostream& operator<<(ostream& o, Date d)
 {
-    cout << d.getDate();
+    o << d.getDate();
     return o;
 }
 

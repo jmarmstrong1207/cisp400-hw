@@ -379,7 +379,7 @@ void Item::setDate()
 // Specification A3 - Overload operator»
 void Item::operator>>(ostream &x)
 {
-    x << "Description: " << getId() << '\n';
+    x << "ID: " << getId() << '\n';
     x << "Quantity: " << getQuantity() << '\n';
     x << "Wholesale Cost: $" << getWholesaleCost() << '\n';
     x << "Retail Cost: $" << getRetailCost() << '\n';

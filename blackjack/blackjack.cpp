@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
 
 using namespace std;
 
@@ -27,7 +28,7 @@ class Blackjack
 {
 private:
     const int deckSize = 52;
-    const Card deck[52] =
+    Card deck[52] =
     {
         Card("Diamond", "2"),
         Card("Diamond", "3"),
@@ -84,8 +85,21 @@ private:
     };
 public:
     Blackjack();
+    void shuffle();
 };
 
 Blackjack::Blackjack()
 {
+}
+
+void Blackjack::shuffle()
+{
+    srand(time(0));
+    for (int i = 0; i < 52; i++)
+    {
+        int randIndex = rand() % 52;
+        Card temp = deck[i];
+        deck[i] = deck[randIndex];
+        deck[randIndex] = temp;
+    }
 }
