@@ -412,9 +412,7 @@ void TodoList::removeItem(int id)
         // the entire thing and then put all the elements back in
         ofstream f(logFile);
         for (int i = 0; i < todosSize; i++)
-        {
             f << todos[i];
-        }
         f.close();
     }
 
@@ -472,6 +470,7 @@ TodoList::TodoList(string file)
         // file WITHOUT reading a line.
         int x = f.peek();
 
+		// Loops to get each logged todo item
         while (x != EOF)
         {
             string dateAdded;
@@ -508,10 +507,10 @@ TodoList::TodoList(string file)
 
             addItem(i);
 
-
             // This ignores the newline per each item so that the parser can get the next one
             f.ignore(1);
         }
+		f.close();
 
         // Because the static var TodoItem::ID is set to the largest id, we need to increment it
         // up one to prevent a single duplicate.
