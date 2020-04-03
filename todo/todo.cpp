@@ -265,15 +265,15 @@ bool stringIsInt(string x)
 // Returns false if person inputted to quit
 bool TodoList::promptUser()
 {
-    char slash;
     char cmd;
     string input;
-    cout << "Enter your command. Start with / and a space. + to add todos: \'/+Do the dishes\':\n";
-    cout << "/q to quit\n";
-    cin >> slash >> cmd;
+    cout << "\"+*input*\" to add as a todo, \"-*input*\" to remove, \"?\" to list the todos. (e.g. +Do the dishes)\n";
+    cout << "q to quit\n";
+    cout << "Enter your command: ";
+    cin >> cmd;
 
     // Quit statement
-    if (slash == '/' && cmd == 'q')
+    if (cmd == 'q')
         return false;
     else if (cmd != '?')
     {
@@ -289,17 +289,15 @@ bool TodoList::promptUser()
 
     while (
         !cin ||
-        slash != '/' ||
         (cmd != '+' && cmd != '?' && cmd != '-') ||
         (cmd == '-' && !stringIsInt(input)))
     {
-        cout << "Invalid input. Please try again.";
-        cout << "Enter your command. Start with / and a space. + to add todos: \'/+Do the dishes\':\n";
-        cout << "/q to quit\n";
+        cout << "Invalid input. Please try again.\n";
+        cout << "Enter your command: ";
 
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cin >> slash >> cmd >> input;
+        cin >> cmd >> input;
     }
 
     switch (cmd)
@@ -412,7 +410,9 @@ void TodoList::removeItem(int id)
         // the entire thing and then put all the elements back in
         ofstream f(logFile);
         for (int i = 0; i < todosSize; i++)
+        {
             f << todos[i];
+        }
         f.close();
     }
 
@@ -470,7 +470,7 @@ TodoList::TodoList(string file)
         // file WITHOUT reading a line.
         int x = f.peek();
 
-		// Loops to get each logged todo item
+        // Loops to get each logged todo item
         while (x != EOF)
         {
             string dateAdded;
@@ -510,7 +510,7 @@ TodoList::TodoList(string file)
             // This ignores the newline per each item so that the parser can get the next one
             f.ignore(1);
         }
-		f.close();
+        f.close();
 
         // Because the static var TodoItem::ID is set to the largest id, we need to increment it
         // up one to prevent a single duplicate.
