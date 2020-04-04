@@ -128,7 +128,24 @@ int Date::getYear()
 
 string Date::getDate()
 {
-    string date = to_string(month) + "/" + to_string(day) + "/" + to_string(year) + " " + to_string(hour) + ":";
+    string date = "";
+
+    if (month < 10)
+        date += "0" + to_string(month) + "/";
+    else
+        date += to_string(month) + "/";
+        
+    if (day < 10)
+        date += "0" + to_string(day) + "/";
+    else
+        date += to_string(day) + "/";
+
+    date += to_string(year) + " ";
+    
+    if (hour < 10)
+        date += "0" + to_string(hour) + ":";
+    else
+        date += to_string(hour) + ":";
 
     if (minute < 10)
         date += "0" + to_string(minute) + ":";

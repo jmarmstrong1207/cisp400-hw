@@ -11,6 +11,7 @@
 
 using namespace std;
 
+// Class prototypes
 class Date
 {
 private:
@@ -97,9 +98,13 @@ public:
     friend ostream &operator<<(ostream &, TodoList &);
 };
 
+// Function prototype
+void programGreeting();
+
 int main()
 {
     srand(time(0));
+    programGreeting();
     Date::componentTest();
     TodoList::componentTest();
     cout << "---------------------------------------" << endl;
@@ -113,6 +118,18 @@ int main()
         loop = t.promptUser();
     }
     return 0;
+}
+
+// Function greeting
+void programGreeting()
+{
+    cout << "Author: James Armstrong\n";
+    cout << "File: todo.cpp - Add, delete, and view your todo items\n";
+    cout << "Due: April 5, 2020" << endl;
+
+    Date now;
+    cout << "Current date: " << now << '\n';
+    cout << "---------------------------------------" << endl;
 }
 
 int TodoItem::ID = 0;
@@ -267,7 +284,7 @@ bool TodoList::promptUser()
 {
     char cmd;
     string input;
-    cout << "\"+*input*\" to add as a todo, \"-*input*\" to remove, \"?\" to list the todos. (e.g. +Do the dishes)\n";
+    cout << "\"+*input*\" to add as a todo, \"-*ID*\" to remove, \"?\" to list the todos. (e.g. +Do the dishes)\n";
     cout << "q to quit\n";
     cout << "Enter your command: ";
     cin >> cmd;
@@ -297,7 +314,11 @@ bool TodoList::promptUser()
 
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cin >> cmd >> input;
+        cin >> cmd;
+        
+        if (cmd == 'q') return false;
+        else if (cmd != '?')
+            cin >> input;
     }
 
     switch (cmd)
@@ -482,12 +503,12 @@ TodoList::TodoList(string file)
             dateAdded = dateAdded.substr(12); // Remove "Date added:" prefix
 
             // Get each element of the date from the dateAdded string
-            int month = stoi(dateAdded.substr(0, 1));
-            int day = stoi(dateAdded.substr(2, 2));
-            int year = stoi(dateAdded.substr(5, 4));
-            int hour = stoi(dateAdded.substr(10, 2));
-            int min = stoi(dateAdded.substr(13, 2));
-            int sec = stoi(dateAdded.substr(16, 4));
+            int month = stoi(dateAdded.substr(0, 2));
+            int day = stoi(dateAdded.substr(3, 2));
+            int year = stoi(dateAdded.substr(6, 4));
+            int hour = stoi(dateAdded.substr(11, 2));
+            int min = stoi(dateAdded.substr(14, 2));
+            int sec = stoi(dateAdded.substr(17, 4));
 
             Date x(month, day, year, hour, min, sec);
 
@@ -619,7 +640,24 @@ int Date::getYear()
 
 string Date::getDate()
 {
-    string date = to_string(month) + "/" + to_string(day) + "/" + to_string(year) + " " + to_string(hour) + ":";
+    string date = "";
+
+    if (month < 10)
+        date += "0" + to_string(month) + "/";
+    else
+        date += to_string(month) + "/";
+
+    if (day < 10)
+        date += "0" + to_string(day) + "/";
+    else
+        date += to_string(day) + "/";
+
+    date += to_string(year) + " ";
+    
+    if (hour < 10)
+        date += "0" + to_string(hour) + ":";
+    else
+        date += to_string(hour) + ":";
 
     if (minute < 10)
         date += "0" + to_string(minute) + ":";
