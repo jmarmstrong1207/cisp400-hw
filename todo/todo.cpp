@@ -362,7 +362,9 @@ bool TodoList::promptUser()
 
     // Specification B2  - ? Symbol
     case '?':
+        cout << "\n---------------------------------------\n";
         cout << *this;
+        cout << "---------------------------------------\n";
         break;
 
     // In 99.99% of cases, the user shouldn't be getting the default case
