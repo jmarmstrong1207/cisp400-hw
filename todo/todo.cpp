@@ -218,7 +218,6 @@ ostream &operator<<(ostream &o, TodoItem &t)
     o << "Date added: " << t.dateAdded << '\n';
     o << "ID #: " << t.id << '\n';
     o << "Todo: " << t.todo << '\n';
-    o << endl;
 
     return o;
 }
