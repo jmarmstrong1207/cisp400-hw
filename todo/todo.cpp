@@ -310,8 +310,11 @@ bool TodoList::promptUser()
         cout << "Invalid input. Please try again.\n";
         cout << "Enter your command: ";
 
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        if (!cin)
+        {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
         cin >> cmd;
 
         if (cmd == 'q')
