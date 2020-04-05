@@ -53,14 +53,21 @@ public:
     TodoItem();
     TodoItem(Date, string, int);
 
+    static void componentTest();
+
     void operator=(string);
     bool operator==(string);
+    bool operator==(TodoItem &t);
     bool operator==(int);
     friend ostream &operator<<(ostream &, TodoItem &);
 
     int getId();
     void setId(int);
+
+    string getTodo();
     void setTodo(string);
+
+    Date getDate();
     void setDate(Date);
 
     static void setStaticId(int);
@@ -78,7 +85,7 @@ private:
 
 public:
     TodoList(string = "");
-    TodoList(TodoList&);
+    TodoList(TodoList &);
 
     void addItem();
     void addItem(string);
@@ -98,14 +105,11 @@ public:
     friend ostream &operator<<(ostream &, TodoList &);
 };
 
-// Function prototype
-void programGreeting();
-
 int main()
 {
     srand(time(0));
-    programGreeting();
     Date::componentTest();
+    TodoItem::componentTest();
     TodoList::componentTest();
     cout << "---------------------------------------" << endl;
 
@@ -114,45 +118,34 @@ int main()
 
     bool loop = true;
     while (loop)
-    {
         loop = t.promptUser();
-    }
     return 0;
 }
 
-// Function greeting
-void programGreeting()
+void TodoItem::componentTest()
 {
-    cout << "Author: James Armstrong\n";
-    cout << "File: todo.cpp - Add, delete, and view your todo items\n";
-    cout << "Due: April 5, 2020" << endl;
-
     Date now;
-    cout << "Current date: " << now << '\n';
-    cout << "---------------------------------------" << endl;
-}
+    TodoItem t(now, "test", 1234);
 
+    // TodoItem initialization test. This is essentially 3 diagnostic tests in just 3 lines
+    cout << "TodoItem initialization ";
+    (t == 1234 && t == "test" && t.getDate().getDate() == now.getDate()) ?
+        cout << "works\n" : cout << "doesn't work\n";
+    cout << endl;
+}
 int TodoItem::ID = 0;
 
-void TodoItem::setTodo(string x)
-{
-    todo = x;
-}
+string TodoItem::getTodo() { return todo; }
 
-void TodoItem::setDate(Date x)
-{
-    dateAdded = x;
-}
+void TodoItem::setTodo(string x) { todo = x; }
 
-void TodoItem::setStaticId(int x)
-{
-    ID = x;
-}
+Date TodoItem::getDate() { return dateAdded; }
 
-int TodoItem::getStaticId()
-{
-    return ID;
-}
+void TodoItem::setDate(Date x) { dateAdded = x; }
+
+void TodoItem::setStaticId(int x) { ID = x; }
+
+int TodoItem::getStaticId() { return ID; }
 
 // Specification A4 - Overload Constructor
 // This is used not only for A4 specifications, but for copying elements from the logfile to the
@@ -168,7 +161,7 @@ TodoItem::TodoItem()
 {
     Date now;
     todo = "";
-    
+
     // Specification A3 - System Date
     dateAdded = now;
 }
@@ -187,6 +180,11 @@ void TodoItem::operator=(string n)
 bool TodoItem::operator==(string n)
 {
     return todo == n;
+}
+
+bool TodoItem::operator==(TodoItem &t)
+{
+    return todo == t.todo;
 }
 
 bool TodoItem::operator==(int id)
@@ -223,9 +221,9 @@ ostream &operator<<(ostream &o, TodoItem &t)
 }
 
 // Specification A1 - Overload Copy Constructor
-TodoList::TodoList(TodoList& t)
+TodoList::TodoList(TodoList &t)
 {
-    dummyItem = false;
+    dummyItem = t.dummyItem;
     todosSize = t.todosSize;
 
     // Copy all elements in dynamic array to new pointer
@@ -246,9 +244,8 @@ void TodoList::componentTest()
     "4" >> x;
     "5" >> x;
     cout << "TodoList::addItem() and >> operator ";
-    (
-        x.todos[0] == "One" && x.todos[1] == "Two" &&
-        x.todos[2] == "3" && x.todos[3] == "4" && x.todos[4] == "5")
+    (x.todos[0] == "One" && x.todos[1] == "Two" &&
+     x.todos[2] == "3" && x.todos[3] == "4" && x.todos[4] == "5")
         ? cout << "works\n"
         : cout << "doesn't work\n";
 
@@ -256,13 +253,15 @@ void TodoList::componentTest()
     x.removeItem(3);
 
     cout << "TodoList::removeItem() ";
-    (
-        x.todos[0] == "Two" && x.todos[2] == "5")
-        ? cout << "works\n"
-        : cout << "doesn't work\n";
+    (x.todos[0] == "Two" && x.todos[2] == "5") ? cout << "works\n" : cout << "doesn't work\n";
     cout << endl;
 
+    // Copy constructor testing
     TodoList y(x);
+
+    cout << "TodoList copy constructor ";
+    (x.todos[0] == y.todos[0] && x.todos[2] == y.todos[2]) ? cout << "works\n" : cout << "doesn't work\n";
+    cout << endl;
 }
 
 // Helper function for prompUser()
@@ -314,8 +313,9 @@ bool TodoList::promptUser()
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cin >> cmd;
-        
-        if (cmd == 'q') return false;
+
+        if (cmd == 'q')
+            return false;
         else if (cmd != '?')
             cin >> input;
     }
@@ -333,7 +333,8 @@ bool TodoList::promptUser()
             addItem();
         }
 
-        else if (!dummyItem) input >> *this;
+        else if (!dummyItem)
+            input >> *this;
 
         // This is enacted when real data is inputted when there is a dummy item
         else if (input != "")
@@ -349,7 +350,7 @@ bool TodoList::promptUser()
             TodoItem::setStaticId(TodoItem::getStaticId() + 1);
 
             logTodo(todos[todosSize - 1]);
-            
+
             dummyItem = false;
         }
         break;
@@ -387,7 +388,7 @@ void TodoList::logTodo(TodoItem x)
 // Dummy item add
 void TodoList::addItem()
 {
-    Date dumm(0,0,0,0,0,0);
+    Date dumm(0, 0, 0, 0, 0, 0);
     TodoItem t(dumm, "dummy", 99999);
     increment();
     todos[todosSize - 1] = t;
@@ -427,7 +428,7 @@ void TodoList::removeItem(int id)
     {
         cout << "Item " << id << " deleted.\n"
              << endl;
-        
+
         // Because an item was deleted, we need to update the logfile. It's easier to delete
         // the entire thing and then put all the elements back in
         ofstream f(logFile);
@@ -437,7 +438,6 @@ void TodoList::removeItem(int id)
         }
         f.close();
     }
-
 }
 
 // Increment array size by one.
@@ -500,7 +500,8 @@ TodoList::TodoList(string file)
 
             // If dateAdded is blank, then we are at the end of the file and there is no more items
             // to add.
-            if (dateAdded == "") break;
+            if (dateAdded == "")
+                break;
             dateAdded = dateAdded.substr(12); // Remove "Date added:" prefix
 
             // Get each element of the date from the dateAdded string
@@ -519,7 +520,8 @@ TodoList::TodoList(string file)
 
             // This will be used to prevent duplicate ids by making the static var LogItem::ID start
             // at this larger Id
-            if (stoi(id) > TodoItem::getStaticId()) TodoItem::setStaticId(stoi(id));
+            if (stoi(id) > TodoItem::getStaticId())
+                TodoItem::setStaticId(stoi(id));
 
             string todo;
             getline(f, todo);
@@ -542,10 +544,13 @@ TodoList::TodoList(string file)
 
 void TodoList::programGreeting()
 {
+    cout << "Author: James Armstrong\n";
+    cout << "File: todo.cpp - Add, delete, and view your todo items\n";
+    cout << "Due: April 5, 2020" << endl;
+
     Date now;
-    cout << "Hw4: TODO - James Armstrong\n";
-    cout << "Current date: " << now << '\n'
-         << endl;
+    cout << "Current date: " << now << '\n';
+    cout << "---------------------------------------" << endl;
 }
 
 Date::Date(int month, int day, int year, int hour, int minute, int second)
@@ -654,7 +659,7 @@ string Date::getDate()
         date += to_string(day) + "/";
 
     date += to_string(year) + " ";
-    
+
     if (hour < 10)
         date += "0" + to_string(hour) + ":";
     else
