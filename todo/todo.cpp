@@ -436,9 +436,7 @@ void TodoList::removeItem(int id)
         // the entire thing and then put all the elements back in
         ofstream f(logFile);
         for (int i = 0; i < todosSize; i++)
-        {
             f << todos[i];
-        }
         f.close();
     }
 }
