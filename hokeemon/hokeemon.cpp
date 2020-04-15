@@ -74,9 +74,11 @@ public:
 class HokeemonGame
 {
 private:
+    void warnDeath();
     HokeemonCreature creature;
 
 public:
+    HokeemonGame();
     void nameCreature();
     void passTime();
     bool promptUser();
@@ -110,6 +112,8 @@ void HokeemonCreature::unitTest(void (*lambda)())
 {
     lambda();
 
+    ////////////////////////////////////////
+    // Setting and getting variables tests
     HokeemonCreature x;
     x.setBoredom(1);
     x.setHunger(2);
@@ -119,6 +123,8 @@ void HokeemonCreature::unitTest(void (*lambda)())
     (x.getBoredom() == 1 && x.getHunger() == 2 && x.getName() == "test123") ?
         cout << "works" : cout << "doesn't work";
     cout << "\n\n";
+    ////////////////////////////////////////
+    // Feeding and playing tests
 
     x.feed();
     x.play();
@@ -127,6 +133,8 @@ void HokeemonCreature::unitTest(void (*lambda)())
         cout << "works" : cout << "doesn't work";
     cout << "\n\n";
     
+    ////////////////////////////////////////
+    // operator + overload test
     HokeemonCreature y;
     x.setBoredom(10);
     y.setBoredom(20);
@@ -141,6 +149,8 @@ void HokeemonCreature::unitTest(void (*lambda)())
         cout << "works" : cout << "doesn't work";
     cout << endl;
 
+    ////////////////////////////////////////
+    // copy constructor test
     cout << "HokeemonCreature: copy constructor ";
     x.setBoredom(1);
     x.setHunger(2);
@@ -153,6 +163,8 @@ void HokeemonCreature::unitTest(void (*lambda)())
 
 void HokeemonCreature2::unitTest()
 {
+    ////////////////////////////////////////
+    // Setting and getting variables tests
     HokeemonCreature2 x;
     x.setBoredom(1);
     x.setHunger(2);
@@ -163,6 +175,8 @@ void HokeemonCreature2::unitTest()
         cout << "works" : cout << "doesn't work";
     cout << "\n\n";
 
+    ////////////////////////////////////////
+    // Feeding and playing tests
     x.feed();
     x.play();
     cout << "HokeemonCreature2: Feeding and playing ";
@@ -173,6 +187,8 @@ void HokeemonCreature2::unitTest()
 
 void HokeemonGame::unitTest()
 {
+    ////////////////////////////////////////
+    // Setting and getting variables tests
     HokeemonGame g;
     g.creature.setBoredom(1);
     g.creature.setHunger(2);
@@ -183,6 +199,8 @@ void HokeemonGame::unitTest()
         cout << "works" : cout << "doesn't work";
     cout << "\n\n";
 
+    ////////////////////////////////////////
+    // Feeding and playing tests
     g.creature.feed();
     g.creature.play();
     cout << "HokeemonGame: Feeding and playing: ";
@@ -190,6 +208,8 @@ void HokeemonGame::unitTest()
         cout << "works" : cout << "doesn't work";
     cout << "\n\n";
 
+    ////////////////////////////////////////
+    // passTime() test
     g.creature.setBoredom(1);
     g.creature.setHunger(2);
     g.passTime();
@@ -206,17 +226,6 @@ Creature::Creature()
     boredom = rand() % 6;
     hunger = rand() % 6;
     dead = false;
-
-    if (boredom == 19 && hunger == 1)
-        cout << "Your creature is about to die from boredom and starvation!" <<
-        "Play and feed with it as the next action!\n";
-
-    else if (boredom == 19)
-        cout << "Your creature is about to die from boredom! Play with it as the next action!\n";
-
-    else if (hunger == 0)
-        cout << "Your creature is about to die from starvation! Feed it as the next action!\n";
-
 }
 
 
@@ -263,14 +272,27 @@ void HokeemonCreature::feed()
 void HokeemonCreature::listen()
 {
     cout << *this;
-    if (getBoredom() == 19 && getHunger() == 1)
+}
+
+HokeemonGame::HokeemonGame()
+{
+    // When the creature is initialized, notify of potential death if its stats are too low to 
+    // survive
+    warnDeath();
+}
+// Warns potential death if it'll happen the next step w/o the right action
+void HokeemonGame::warnDeath()
+{
+    // Because any action passes time, if the user does an action that doesn't prevent the death
+    // of the creature, it will die leaving the user possibly confused. For example, if the creature
+    // has 0 hunger and the user does listen() to see the stats, the creature will instantly die.
+    // These three if statements will prevent this issue by notifying the user
+    if (creature.getBoredom() == 20 && creature.getHunger() == 1)
         cout << "Your creature is about to die from boredom and starvation!" <<
         "Play and feed with it as the next action!\n";
-
-    else if (getBoredom() == 19)
+    else if (creature.getBoredom() == 20)
         cout << "Your creature is about to die from boredom! Play with it as the next action!\n";
-
-    else if (getHunger() == 0)
+    else if (creature.getHunger() == 0)
         cout << "Your creature is about to die from starvation! Feed it as the next action!\n";
 }
 
@@ -313,9 +335,12 @@ void HokeemonCreature::operator=(HokeemonCreature& x)
 // all without warnings/errors
 void HokeemonCreature::operator +(HokeemonCreature& x)
 {
+
+    // Get the halves of the left and right creature and combine them 
     string l = getName().substr(0, getName().length() / 2);
     string r = x.getName().substr(0, x.getName().length() / 2);
 
+    // Left creature gets mutated. Boredom stays the same, but the hunger comes from the right creature
     setName(l + r);
     setHunger(x.getHunger());
 }
@@ -336,6 +361,9 @@ void HokeemonGame::passTime()
     creature.setHunger(creature.getHunger() - 1);
     creature.setBoredom(creature.getBoredom() + 1);
 
+    warnDeath();
+
+    // Death notifications
     if (creature.getHunger() < 0 && creature.getBoredom() > 20)
     {
         cout << "Your creature died of boredom and starvation. Game over.\n";
@@ -390,6 +418,7 @@ bool HokeemonGame::promptUser()
         creature.feed();
         passTime();
         break;
+
     case 4:
         creature.play();
         creature.feed();
@@ -397,7 +426,6 @@ bool HokeemonGame::promptUser()
         break;
 
     case 5:
-
         // Notifies main() if the user quit or not to break the loop
         return false;
         break;
@@ -406,7 +434,6 @@ bool HokeemonGame::promptUser()
         cout << "I have no clue how this was called.\n";
         break;
     }
-
     return true;
 }
 
