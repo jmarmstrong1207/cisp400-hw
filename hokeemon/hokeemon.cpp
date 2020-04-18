@@ -292,7 +292,7 @@ void HokeemonGame::warnDeath()
         "Play and feed with it as the next action!\n";
     else if (creature.getBoredom() == 20)
         cout << "Your creature is about to die from boredom! Play with it as the next action!\n";
-    else if (creature.getHunger() == 0)
+    else if (creature.getHunger() == 1)
         cout << "Your creature is about to die from starvation! Feed it as the next action!\n";
 }
 
