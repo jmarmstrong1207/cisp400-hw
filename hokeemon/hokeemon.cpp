@@ -88,6 +88,10 @@ public:
 
 int main()
 {
+    cout << "There was inconsistency with the requirements with hunger. Feeding reduces hunger, "
+    << "but hunger < 0 kills the creature. Instead, I made it so hunger > 20 kills the creature."
+    << endl;
+    
     srand(time(0));
 
     cout << "UNIT TESTS:\n";
@@ -265,8 +269,8 @@ void HokeemonCreature::play()
 void HokeemonCreature::feed()
 {
     int x = rand() % 4 + 3;
-    cout << "You fed your creature. Hunger is now " << getHunger() + x << "." << endl;
-    setHunger(getHunger() + x);
+    cout << "You fed your creature. Hunger is now " << getHunger() - x << "." << endl;
+    setHunger(getHunger() - x);
 }
 
 void HokeemonCreature::listen()
@@ -276,10 +280,8 @@ void HokeemonCreature::listen()
 
 HokeemonGame::HokeemonGame()
 {
-    // When the creature is initialized, notify of potential death if its stats are too low to 
-    // survive
-    warnDeath();
 }
+
 // Warns potential death if it'll happen the next step w/o the right action
 void HokeemonGame::warnDeath()
 {
@@ -287,12 +289,12 @@ void HokeemonGame::warnDeath()
     // of the creature, it will die leaving the user possibly confused. For example, if the creature
     // has 0 hunger and the user does listen() to see the stats, the creature will instantly die.
     // These three if statements will prevent this issue by notifying the user
-    if (creature.getBoredom() == 20 && creature.getHunger() == 1)
+    if (creature.getBoredom() == 20 && creature.getHunger() == 20)
         cout << "Your creature is about to die from boredom and starvation!" <<
         "Play and feed with it as the next action!\n";
     else if (creature.getBoredom() == 20)
         cout << "Your creature is about to die from boredom! Play with it as the next action!\n";
-    else if (creature.getHunger() == 1)
+    else if (creature.getHunger() == 20)
         cout << "Your creature is about to die from starvation! Feed it as the next action!\n";
 }
 
@@ -306,8 +308,8 @@ void HokeemonCreature2::play()
 void HokeemonCreature2::feed()
 {
     int x = rand() % 4 + 1000;
-    cout << "You fed your creature. Hunger is now " << getHunger() + x << "." << endl;
-    setHunger(getHunger() + x);
+    cout << "You fed your creature. Hunger is now " << getHunger() - x << "." << endl;
+    setHunger(getHunger() - x);
 }
 
 void HokeemonCreature2::listen()
@@ -358,18 +360,18 @@ void HokeemonGame::nameCreature()
 // Specification C1 - PassTime()
 void HokeemonGame::passTime()
 {
-    creature.setHunger(creature.getHunger() - 1);
+    creature.setHunger(creature.getHunger() + 1);
     creature.setBoredom(creature.getBoredom() + 1);
 
     warnDeath();
 
     // Death notifications
-    if (creature.getHunger() < 0 && creature.getBoredom() > 20)
+    if (creature.getHunger() > 20 && creature.getBoredom() > 20)
     {
         cout << "Your creature died of boredom and starvation. Game over.\n";
         creature.setDeath(true);
     }
-    else if (creature.getHunger() < 0)
+    else if (creature.getHunger() > 20)
     {
         cout << "Your creature died of starvation. Game over.\n";
         creature.setDeath(true);
