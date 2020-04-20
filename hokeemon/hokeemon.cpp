@@ -84,14 +84,13 @@ public:
     bool promptUser();
 
     static void unitTest();
+    static void programGreeting();
 };
 
 int main()
 {
-    cout << "There was inconsistency with the requirements with hunger. Feeding reduces hunger, "
-    << "but hunger < 0 kills the creature. Instead, I made it so hunger > 20 kills the creature."
-    << endl;
-    
+    HokeemonGame::programGreeting();
+
     srand(time(0));
 
     cout << "UNIT TESTS:\n";
@@ -103,13 +102,24 @@ int main()
     HokeemonCreature::unitTest(lambda);
 
     HokeemonCreature2::unitTest();
-    cout << "----------------------------------" << endl;
+    cout << "----------------------------------\n" << endl;
     
     HokeemonGame h;
 
     while (h.promptUser()) {};
 
     return 0;
+}
+
+void HokeemonGame::programGreeting()
+{
+    cout << "Hokeemon Game - A tamagochi-like game.\n";
+    cout << "Author: James Armstrong\n";
+
+    cout << "There was inconsistency with the requirements with hunger. Feeding reduces hunger, "
+    << "but hunger < 0 kills the creature. Instead, I made it so hunger > 20 kills the creature.\n";
+
+    cout << "----------------------------------\n" << endl;
 }
 
 void HokeemonCreature::unitTest(void (*lambda)())
