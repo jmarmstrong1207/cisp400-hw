@@ -143,7 +143,7 @@ void HokeemonCreature::unitTest(void (*lambda)())
     x.feed();
     x.play();
     cout << "HokeemonCreature: Feeding and playing ";
-    (x.getBoredom() < 1 && x.getHunger() > 2) ?
+    (x.getBoredom() < 1 && x.getHunger() < 2) ?
         cout << "works" : cout << "doesn't work";
     cout << "\n\n";
     
@@ -194,7 +194,7 @@ void HokeemonCreature2::unitTest()
     x.feed();
     x.play();
     cout << "HokeemonCreature2: Feeding and playing ";
-    (x.getBoredom() < 1 && x.getHunger() > 2) ?
+    (x.getBoredom() < 1 && x.getHunger() < 2) ?
         cout << "works" : cout << "doesn't work";
     cout << endl;
 }
@@ -218,7 +218,7 @@ void HokeemonGame::unitTest()
     g.creature.feed();
     g.creature.play();
     cout << "HokeemonGame: Feeding and playing: ";
-    (g.creature.getBoredom() < 1 && g.creature.getHunger() > 2) ?
+    (g.creature.getBoredom() < 1 && g.creature.getHunger() < 2) ?
         cout << "works" : cout << "doesn't work";
     cout << "\n\n";
 
@@ -228,7 +228,7 @@ void HokeemonGame::unitTest()
     g.creature.setHunger(2);
     g.passTime();
     cout << "HokeemonGame: passTime() ";
-    (g.creature.getBoredom() > 1 && g.creature.getHunger() < 2) ?
+    (g.creature.getBoredom() > 1 && g.creature.getHunger() > 2) ?
         cout << "works" : cout << "doesn't work";
     cout << endl;
 
