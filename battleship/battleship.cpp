@@ -1064,23 +1064,25 @@ char Move::getCol()
 ostream& operator<<(ostream &x, Move m)
 {
     if (m.isPlayer())
-        cout << " - PLAYER'S TURN: \n";
+        x << " - PLAYER'S TURN: \n";
     else
-        cout << " - AI'S TURN: \n";
+        x << " - AI'S TURN: \n";
 
-    cout << "Your map: \n";
+    x << "Your map: \n";
     m.displayPlayerMap();
         
-    cout << "AI map: \n";
+    x << "AI map: \n";
     m.displayEnemyMap();
 
 
     if (m.isHit())
-        cout << "HIT - ";
+        x << "HIT - ";
     else
-        cout << "MISS - ";
-    cout << m.getRow() << m.getCol() << '\n'; 
-    cout << endl;
+        x << "MISS - ";
+    x << m.getRow() << m.getCol() << '\n'; 
+    x << endl;
+
+    return x;
 }
 
 //Specification B4 - Overload »
