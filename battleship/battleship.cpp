@@ -306,6 +306,8 @@ void programGreeting()
     Date x(5, 3, 2020, 23, 59, 59);
     cout << "Due date: " << x.getDate() << '\n'
          << endl;
+        
+    cout << "In the map, 'M' means missed shot and 'X' means ship has been hit. Good luck!" << endl;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -643,9 +645,9 @@ void BattleshipGame::displayEnemyMapHidden()
 
         for (int j = 0; j < mapSize; j++)
         {
-            if (enemyMap[i][j] == 'X')
+            if (enemyMap[i][j] == 'X' || enemyMap[i][j] == 'M')
             {
-                cout << "X";
+                cout << enemyMap[i][j];
                 cout << " ";
             }
             else
@@ -748,7 +750,7 @@ void BattleshipGame::shootEnemy(int row, int col)
 {
     bool hit = false;
 
-    if (enemyMap[row][col] != ' ' && enemyMap[row][col] != 'X')
+    if (enemyMap[row][col] != ' ' && enemyMap[row][col] != 'X' && enemyMap[row][col] != 'M')
     {
         cout << "PLAYER HAS HIT A SHIP" << endl;
         enemyMap[row][col] = 'X';
@@ -757,7 +759,7 @@ void BattleshipGame::shootEnemy(int row, int col)
     }
 
     // Specification B2 - Adv Input Validation
-    else if (enemyMap[row][col] == 'X')
+    else if (enemyMap[row][col] == 'X' || enemyMap[row][col] == 'M')
     {
 		clearScreen();
         cout << "You cannot shoot where you already shot. Please try again.\n";
@@ -772,7 +774,10 @@ void BattleshipGame::shootEnemy(int row, int col)
         shootEnemy(row, col);
     }
     else
+    {
         cout << "PLAYER MISSED!" << endl;
+        enemyMap[row][col] = 'M';
+    }
 
 
     // Convert to original answer so that moves array knows the coordinate
@@ -785,7 +790,7 @@ void BattleshipGame::shootEnemy(int row, int col)
 void BattleshipGame::shootPlayer(int row, int col)
 {
     bool hit = false;
-    if (playerMap[row][col] != ' ' && playerMap[row][col] != 'X')
+    if (playerMap[row][col] != ' ' && playerMap[row][col] != 'X' && playerMap[row][col] != 'M')
     {
         cout << "AI HAS HIT A SHIP" << endl;
         playerMap[row][col] = 'X';
@@ -794,10 +799,13 @@ void BattleshipGame::shootPlayer(int row, int col)
 
     // Specification C2 - Prohibit AI wasted shots
     // Coordinates previously hit are marked with 'X'.
-    else if (playerMap[row][col] == 'X')
+    else if (playerMap[row][col] == 'X' || playerMap[row][col] == 'M')
         shootPlayer(rand() % 9, rand() % 9);
     else
+    {
         cout << "AI MISSED" << endl;
+        playerMap[row][col] = 'M';
+    }
 
     // Convert to original answer so that moves array knows the coordinate
     char r = static_cast<char>(row + 65);
@@ -950,30 +958,13 @@ void BattleshipGame::replayGame()
     cout << "-------------------------------------\n";
     for (int i = 0; i < movesSize; i++)
     {
-        cout << moves[i];
-        /*
-        cout << "MOVE " << i + 1;
-        if (moves[i].isPlayer())
-            cout << " - PLAYER'S TURN: \n";
-        else
-            cout << " - AI'S TURN: \n";
-
-        cout << "Your map: \n";
-        moves[i].displayPlayerMap();
-        
-        cout << "AI map: \n";
-        moves[i].displayEnemyMap();
-
-
-        if (moves[i].isHit())
-            cout << "HIT - ";
-        else
-            cout << "MISS - ";
-        cout << moves[i].getRow() << moves[i].getCol() << '\n'; 
-
-        cout << endl;
-        */
-        cout << "-------------------------------------";
+        // A primitive delayer
+        for (int j = 0; j < 999999999; j++)
+        {
+            if (j == 999999998)
+                cout << moves[i];
+        }
+        cout << "-------------------------------------" << endl;
     }
     
 }
