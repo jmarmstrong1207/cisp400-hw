@@ -167,7 +167,7 @@ public:
 
     int getStepsSurvived() { return stepsSurvived; }
     void setStepsSurvived(int x) { stepsSurvived = x; }
-    int incrementStepsSurvived() { stepsSurvived++; }
+    void incrementStepsSurvived() { stepsSurvived++; }
     
     void setPower(int x) { power = x; }
     int getPower() { return power; }
