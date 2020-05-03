@@ -96,9 +96,8 @@ class Move
 {
 private:
     friend ostream& operator<<(ostream&, Move);
-    int mapSize;
-    bool hit;
-    bool player;
+    bool hit; // Determines if the move is a hit or not
+    bool player; // Determines if the move is from a player or not
     
     char playerMap[10][10];
     char enemyMap[10][10];
@@ -106,7 +105,6 @@ private:
     // Coords of the move
     char row;
     char col;
-    
 
 public:
 
@@ -129,12 +127,11 @@ class BattleshipGame
 private:
     friend void operator>>(BattleshipGame&, string&);
     friend Move;
-    bool mapCheats;
-    bool multiFire;
+    bool mapCheats; // Enables the player to see enemy map. Disabled by default
+    bool multiFire; // multiFire mode. Disabled by default
     int mapSize;
     char playerMap[10][10];
     char enemyMap[10][10];
-    int gameShipsSize;
 
     Ship gameShips[5]; // List of ships available for the game
 
@@ -154,9 +151,6 @@ public:
     
     string getUserInput();
     void displayMaps();
-
-    char** getPlayerMap();
-    char** getEnemyMap();
 
     void shootEnemy(int row, int col);
     void shootPlayer(int row, int col);
@@ -665,7 +659,6 @@ BattleshipGame::BattleshipGame()
     multiFire = false;
     mapCheats = false;
     mapSize = 10;
-    gameShipsSize = 5;
 
     // Set up map with spaces to make it empty
     for (int i = 0; i < mapSize; i++)
