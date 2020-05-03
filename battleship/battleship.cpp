@@ -98,6 +98,7 @@ private:
     friend ostream& operator<<(ostream&, Move);
     bool hit; // Determines if the move is a hit or not
     bool player; // Determines if the move is from a player or not
+    int mapSize;
     
     char playerMap[10][10];
     char enemyMap[10][10];
