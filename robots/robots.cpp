@@ -1,3 +1,7 @@
+// robots.cpp
+// Author: James Armstrong
+// Due: End of School
+
 #include <iostream>
 #include <cstdlib>
 #include <algorithm>
