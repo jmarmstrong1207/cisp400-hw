@@ -1,6 +1,6 @@
 // robots.cpp
 // Author: James Armstrong
-// Due: End of School
+// Due: End of the semester
 
 #include <iostream>
 #include <cstdlib>
@@ -321,7 +321,7 @@ private:
         else robot.setPower(robot.getPower() - 1);
     }
 
-    // Finds a match of the current state and the genes in the robot
+    // Finds a match of the current state of the robot and the genes in the robot
     // Returns -1 if not found
     // Returns index of the gene array if found
     int getGeneMatch()
@@ -356,7 +356,6 @@ private:
     void passTime()
     {
         setCurrentRobotState();
-        getRobotLocation();
 
         //displayMap();
         moveRobot();
