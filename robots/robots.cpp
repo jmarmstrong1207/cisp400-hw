@@ -216,10 +216,11 @@ private:
     }
 
 
-    // Moves robot, consuming batteries and not moving if it's an invalid move
+    // Moves robot by one step, consuming batteries and not moving if it's an invalid move.
     void moveRobot()
     {
         getRobotLocation();
+        setCurrentRobotState();
 
         int geneIndex = getGeneMatch();
 
@@ -319,6 +320,9 @@ private:
             robot.incrementTotalEnergyHarvested();
         }
         else robot.setPower(robot.getPower() - 1);
+
+        // Refresh robot location
+        getRobotLocation();
     }
 
     // Finds a match of the current state of the robot and the genes in the robot
@@ -345,22 +349,10 @@ private:
     // Sets the current robot state array from the robot's surroundings
     void setCurrentRobotState()
     {
-        getRobotLocation();
         currentRobotState[0] = map.getMapElement(currentLocation.row - 1, currentLocation.col); // North
         currentRobotState[1] = map.getMapElement(currentLocation.row + 1, currentLocation.col); // South
         currentRobotState[2] = map.getMapElement(currentLocation.row, currentLocation.col + 1); // East
         currentRobotState[3] = map.getMapElement(currentLocation.row, currentLocation.col - 1); // West
-    }
-
-    // Does one step of the game
-    void passTime()
-    {
-        setCurrentRobotState();
-
-        //displayMap();
-        moveRobot();
-
-
     }
 
 public:
@@ -378,7 +370,7 @@ public:
     {
         while (robot.getPower() > 0)
         {
-            passTime();
+            moveRobot();
             robot.incrementStepsSurvived();
         }
         // cout << "HE DED\n";
