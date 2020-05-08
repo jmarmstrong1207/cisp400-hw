@@ -19,6 +19,11 @@ public:
 
     Map()
     {
+        newMap();
+    }
+
+    void newMap()
+    {
         // Set up map with spaces to make it empty
         for (int i = 0; i < mapSize; i++)
             for (int j = 0; j < mapSize; j++)
@@ -221,6 +226,7 @@ private:
     {
         getRobotLocation();
         setCurrentRobotState();
+        //displayMap();
 
         int geneIndex = getGeneMatch();
 
@@ -239,10 +245,10 @@ private:
         */
 
         // Holds value of the action in the gene index geneIndex
-        char action;
+        char action = ' ';
 
         // Holds the value of coords the robot is going to move to
-        char mapCoordValue;
+        char mapCoordValue = ' ';
 
         // If no matching gene, then do the last gene's action
         if (geneIndex == -1)
@@ -364,6 +370,10 @@ public:
     }
 
     void setRobot(Robot x) { robot = x; }
+    void newMap()
+    {
+        map.newMap();
+    }
     Robot getRobot() { return robot; }
 
     void start()
@@ -420,7 +430,11 @@ private:
         for (int i = population / 2; i < population; i += 2)
         {
             robotSimulations[i].setRobot(Robot(robotSimulations[num].getRobot(), robotSimulations[num + 1].getRobot()));
+            robotSimulations[i].newMap();
+
             robotSimulations[i + 1].setRobot(Robot(robotSimulations[num + 1].getRobot(), robotSimulations[num].getRobot()));
+            robotSimulations[i + 1].newMap();
+
             num += 2;
         }
     }
