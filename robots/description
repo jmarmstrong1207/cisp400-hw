@@ -1,0 +1,2 @@
+Simulates evolution of many robots using genes, which is just an array that tells the robot what to do based on its surroundings. 
+Its goal is to get the most energy from batteries as efficiently as possible, avoiding walls in the map. It evolves from random mutation.
